@@ -14,8 +14,6 @@ typedef struct {
 } Parser;
 Chunk *compilingChunk;
 
-static Chunk *currentChunk() { return compilingChunk; }
-
 Parser parser;
 
 typedef enum {
@@ -42,7 +40,15 @@ typedef struct {
   Token name;
   int depth;
 } Local;
+typedef enum {
+  TYPE_FUNCTION,
+  TYPE_SCRIPT,
+} FunctionType;
 typedef struct {
+  // compiler compiles to functions with chunks
+  // instead of straight up chunks
+  ObjFunction *function;
+  FunctionType type;
   Local locals[UINT8_COUNT];
   int localCount;
   int scopeDepth;
@@ -50,7 +56,10 @@ typedef struct {
 } Compiler;
 
 Compiler *current = NULL;
+static Chunk *currentChunk() { return &current->function->chunk; }
+
 static void expression();
+
 static void statement();
 static void declaration();
 static bool check(TokenType type);
@@ -421,9 +430,12 @@ static int writeJump(uint8_t instruction) {
 static void writeConstant(Value value) {
   writeBytes(OP_CONSTANT, makeConstant(value));
 }
-static void initCompiler(Compiler *compiler) {
+static void initCompiler(Compiler *compiler, FunctionType type) {
+  compiler->function = NULL;
+  compiler->type = type;
   compiler->localCount = 0;
   compiler->scopeDepth = 0;
+  compiler->function = newFunction();
   current = compiler;
 }
 static void endCompiler() { writeReturn(); }
@@ -611,7 +623,7 @@ bool compile(const char *source, Chunk *chunk) {
   parser.hadError = false;
   advance();
   Compiler compiler;
-  initCompiler(&compiler);
+  initCompiler(&compiler, TYPE_SCRIPT);
   while (!match(TOKEN_EOF)) {
     if (parser.cooked) {
       parser.cooked = false; // reset to ok
