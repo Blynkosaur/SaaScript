@@ -50,6 +50,8 @@ static inline bool isObjType(Value value, ObjType type) {
 #define PAYLOAD_STRING(value)                                                  \
   ((StringObj *)(PAYLOAD_OBJ(value))) // --> converts value's obj* to stringobj*
 #define PAYLOAD_CSTRING(value) (((StringObj *)(PAYLOAD_OBJ(value)))->chars)
+#define IS_FUNCTION(value) isObjType(value, OBJ_FUNCTION)
+#define PAYLOAD_FUNCTION(value) ((ObjFunction *)PAYLOAD_OBJ(value))
 StringObj *copyString(const char *chars, int length);
 
 StringObj *makeObjWithString(char *chars, int length);
