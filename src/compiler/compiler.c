@@ -1,5 +1,6 @@
 #include "../../include/compiler/compiler.h"
 #include "../../include/compiler/scanner.h"
+#include "../../include/debug.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -437,8 +438,20 @@ static void initCompiler(Compiler *compiler, FunctionType type) {
   compiler->scopeDepth = 0;
   compiler->function = newFunction();
   current = compiler;
+  Local *local = &current->locals[current->localCount++];
+  local->depth = 0;
+  local->name.start = "";
+  local->name.length = 0;
 }
-static void endCompiler() { writeReturn(); }
+static ObjFunction *endCompiler() {
+  writeReturn();
+  ObjFunction *function = current->function;
+#ifdef DEBUG_PRINT_CODE
+  disassembleChunk(currentChunk(),
+                   function->name != NULL ? function->name->chars : "<script>");
+#endif
+  return function;
+}
 static void beginScope() { current->scopeDepth++; }
 static void endScope() {
   current->scopeDepth--;
@@ -616,9 +629,9 @@ ParseRule rules[] = {
 };
 static ParseRule *getRule(TokenType type) { return &rules[type]; }
 
-bool compile(const char *source, Chunk *chunk) {
+ObjFunction *compile(const char *source) {
   initScanner(source);
-  compilingChunk = chunk;
+  // compilingChunk = chunk;
   parser.hadError = false;
   parser.hadError = false;
   advance();
@@ -631,15 +644,6 @@ bool compile(const char *source, Chunk *chunk) {
     }
     declaration();
   }
-  endCompiler();
-  return true;
-
-#ifdef DEBUG_PRINT_CODE
-#include "../../include/debug.h"
-  if (!parser.hadError) {
-    disassembleChunk(currentChunk(), "code");
-  }
-#endif
-
-  return !parser.hadError;
+  ObjFunction *function = endCompiler();
+  return parser.hadError ? NULL : function;
 }

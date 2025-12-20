@@ -65,6 +65,10 @@ StringObj *copyString(const char *chars, int length) {
   return allocateString(heapChars, length, hash);
 }
 static void printFunction(ObjFunction *function) {
+  if (function->name == NULL) {
+    printf("<script>");
+    return;
+  }
   printf("<fn %s", function->name->chars);
 }
 
