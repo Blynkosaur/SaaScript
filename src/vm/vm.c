@@ -190,11 +190,14 @@ static InterpretResult run() {
       break;
     }
     case OP_GET_LOCAL: {
+      // duplicates the existing slot in the VM stack to the top of the stack
+      // for later use
       uint8_t slot = READ_BYTE();
       push(vm.stack[slot]);
       break;
     }
     case OP_SET_LOCAL: {
+      // sets the slot to the top of the stack
       uint8_t slot = READ_BYTE();
       vm.stack[slot] = peek(0);
       break;
