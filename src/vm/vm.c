@@ -70,9 +70,10 @@ static InterpretResult run() {
 
 #ifdef DEBUG_TRACE_EXECUTION // only for debugging
     printf("vm.ip: %p\n", frame->ip);
-    printf("vm.chunk->code: %p, offset: %d", frame->function->chunk->code,
-           frame->ip - frame->function->chunk->code);
-    disassembleInstruction(vm.chunk, (int)(vm.ip - vm.chunk->code));
+    printf("vm.chunk->code: %p, offset: %ld\n", &frame->function->chunk.code,
+           frame->ip - frame->function->chunk.code);
+    disassembleInstruction(&frame->function->chunk,
+                           (int)(frame->ip - frame->function->chunk.code));
 
 #endif
     uint8_t instruction;
