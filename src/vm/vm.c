@@ -69,9 +69,9 @@ static InterpretResult run() {
   for (;;) {
 
 #ifdef DEBUG_TRACE_EXECUTION // only for debugging
-    printf("vm.ip: %p\n", vm.ip);
-    printf("vm.chunk->code: %p, offset: %d", vm.chunk->code,
-           vm.ip - vm.chunk->code);
+    printf("vm.ip: %p\n", frame->ip);
+    printf("vm.chunk->code: %p, offset: %d", frame->function->chunk->code,
+           frame->ip - frame->function->chunk->code);
     disassembleInstruction(vm.chunk, (int)(vm.ip - vm.chunk->code));
 
 #endif
@@ -199,29 +199,29 @@ static InterpretResult run() {
       // duplicates the existing slot in the VM stack to the top of the stack
       // for later use
       uint8_t slot = READ_BYTE();
-      push(vm.stack[slot]);
+      push(frame->slots[slot]);
       break;
     }
     case OP_SET_LOCAL: {
       // sets the slot to the top of the stack
       uint8_t slot = READ_BYTE();
-      vm.stack[slot] = peek(0);
+      frame->slots[slot] = peek(0);
       break;
     }
     case OP_JUMP_IF_FALSE: {
       uint16_t offset = READ_SHORT();
       if (isFalsey(peek(0)))
-        vm.ip += offset;
+        frame->ip += offset;
       break;
     }
     case OP_JUMP: {
       uint16_t offset = READ_SHORT();
-      vm.ip += offset;
+      frame->ip += offset;
       break;
     }
     case OP_LOOP: {
       u_int16_t offset = READ_SHORT();
-      vm.ip -= offset;
+      frame->ip -= offset;
       break;
     }
     case OP_RETURN: {
