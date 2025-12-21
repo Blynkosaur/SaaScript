@@ -12,7 +12,10 @@
 VM vm;
 
 static Value peek(int distance) { return vm.stackTop[-1 - distance]; }
-static void resetStack() { vm.stackTop = vm.stack; }
+static void resetStack() {
+  vm.stackTop = vm.stack;
+  vm.frameCount = 0;
+}
 static void runtimeError(const char *format, ...) {
   va_list args;
   va_start(args, format);
@@ -43,11 +46,14 @@ static void concatenate() {
 }
 
 static InterpretResult run() {
+  CallFrame *frame = &vm.frames[vm.frameCount - 1];
 #define READ_BYTE()                                                            \
-  (*vm.ip++) // dereferences vm.ip (index pointer) and moves the pointer more
-#define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
+  (*frame->ip++) // dereferences vm.ip (index pointer) and moves the pointer
+                 // more
+#define READ_CONSTANT() (frame->function->chunk.constants.values[READ_BYTE()])
 #define READ_STRING() PAYLOAD_STRING(READ_CONSTANT())
-#define READ_SHORT() (vm.ip += 2, (uint16_t)((vm.ip[-2] << 8) | vm.ip[-1]))
+#define READ_SHORT()                                                           \
+  (frame->ip += 2, (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
   // reads the two bytes for the jump operation
 #define BINARY_OP(valueType, op)                                               \
   do {                                                                         \
