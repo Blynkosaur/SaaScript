@@ -69,8 +69,10 @@ static void parsePrecedence(Precedence precedence);
 static u_int8_t makeConstant(Value value);
 static int writeLoop(int loopStart);
 static bool match(TokenType type);
+static void defineVariable(uint8_t global);
 static void consume(TokenType type, const char *message);
 static void advance();
+static uint8_t parseVariable(const char *errorMessage);
 static void error(const char *message);
 static void writeByte(uint8_t byte);
 static void whileLoop();
@@ -78,6 +80,8 @@ static void forLoop();
 static void patchJump(int offset);
 static int writeJump(uint8_t instruction);
 static void markInitialized();
+static ObjFunction *endCompiler();
+static void initCompiler(Compiler *compiler, FunctionType type);
 static void endScope();
 static void beginScope();
 static bool identifierEquals(Token *a, Token *b);
@@ -162,6 +166,23 @@ static void block() {
   }
   consume(TOKEN_RIGHT_BRACE, "Expect '}' after block.");
 }
+static void function(FunctionType type) {
+  Compiler compiler;
+  initCompiler(&compiler, type);
+  beginScope();
+  consume(TOKEN_LEFT_PAREN, "Expected '(' after function name.");
+  consume(TOKEN_RIGHT_PAREN, "Expected ')' after function name.");
+  consume(TOKEN_LEFT_BRACE, "Expected '{' after function name.");
+  block();
+  ObjFunction *function = endCompiler();
+  writeBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)));
+}
+static void functionDeclaration() {
+  uint8_t global = parseVariable("Expected function name.");
+  markInitialized();
+  function(TYPE_FUNCTION);
+  defineVariable(global);
+}
 static uint8_t identifierConstant(Token *token) {
   return makeConstant(OBJ_VAL(copyString(
       token->start,
@@ -233,6 +254,8 @@ parseVariable(const char *errorMessage) { // stores the variable name
                          // the value array
 }
 static void markInitialized() {
+  if (current->scopeDepth == 0) // if a function is called at the top level
+    return;
   current->locals[current->localCount - 1].depth = current->scopeDepth;
 }
 static void varDeclaration() {
@@ -348,7 +371,9 @@ static void synchronize() {
   }
 }
 static void declaration() {
-  if (match(TOKEN_VAR)) {
+  if (match(TOKEN_FUN)) {
+    functionDeclaration();
+  } else if (match(TOKEN_VAR)) {
     varDeclaration();
   } else {
 
