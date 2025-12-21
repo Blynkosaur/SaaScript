@@ -237,7 +237,7 @@ static InterpretResult run() {
     printf("VM stack:");
     for (Value *slot = vm.stack; slot < vm.stackTop; slot++) {
       printf("[ ");
-      printValue(*slot);
+      // printValue(*slot);
       printf(" ]");
     }
     printf("\n\n");
