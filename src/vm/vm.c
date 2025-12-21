@@ -23,8 +23,9 @@ static void runtimeError(const char *format, ...) {
   va_end(args);
   fputs("\n", stderr);
 
-  size_t instruction = vm.ip - vm.chunk->code - 1;
-  int line = vm.chunk->lines[instruction];
+  CallFrame *frame = &vm.frames[vm.frameCount - 1];
+  size_t instruction = frame->ip - frame->function->chunk.code - 1;
+  int line = frame->function->chunk.lines[instruction];
   fprintf(stderr, "[line %d] in script \n", line);
   resetStack();
 }
@@ -264,23 +265,16 @@ static InterpretResult run() {
 #undef READ_SHORT
 }
 InterpretResult interpret(const char *source) {
-  Chunk *chunk = malloc(sizeof(Chunk));
-  initChunk(chunk);
-  if (!compile(source, chunk)) {
-    freeChunk(chunk);
-    printf("INTERPRET_COMPILE_ERROR\n");
-    freeChunk(chunk);
-    free(chunk);
+  ObjFunction *function = compile(source);
+  if (function == NULL)
     return INTERPRET_COMPILE_ERROR;
-  }
-  vm.chunk = chunk;
-  vm.ip = vm.chunk->code;
-  InterpretResult result = run();
-  freeChunk(chunk);
-  free(chunk);
-  return result;
+  push(OBJ_VAL(function));
+  CallFrame *frame = &vm.frames[vm.frameCount++];
+  frame->function = function;
+  frame->ip = function->chunk.code;
+  frame->slots = vm.stack;
+  return run();
 }
-
 void initVM() {
   vm.objectsHead = NULL;
   resetStack();
