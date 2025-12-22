@@ -45,10 +45,12 @@ typedef enum {
   TYPE_FUNCTION,
   TYPE_SCRIPT,
 } FunctionType;
-typedef struct {
+typedef struct Compiler {
   // compiler compiles to functions with chunks
   // instead of straight up chunks
+
   ObjFunction *function;
+  struct Compiler *enclosing;
   FunctionType type;
   Local locals[UINT8_COUNT];
   int localCount;
@@ -171,6 +173,17 @@ static void function(FunctionType type) {
   initCompiler(&compiler, type);
   beginScope();
   consume(TOKEN_LEFT_PAREN, "Expected '(' after function name.");
+  if (!check(TOKEN_RIGHT_PAREN)) {
+    do {
+      current->function->arity++;
+      if (current->function->arity > 255) {
+        errorAtCurrent("Can't have more than 255 params");
+      }
+      uint8_t constant = parseVariable("Expected param name.");
+      defineVariable(constant);
+
+    } while (match(TOKEN_COMMA));
+  }
   consume(TOKEN_RIGHT_PAREN, "Expected ')' after function name.");
   consume(TOKEN_LEFT_BRACE, "Expected '{' after function name.");
   block();
@@ -457,6 +470,7 @@ static void writeConstant(Value value) {
   writeBytes(OP_CONSTANT, makeConstant(value));
 }
 static void initCompiler(Compiler *compiler, FunctionType type) {
+  compiler->enclosing = current;
   compiler->function = NULL;
   compiler->type = type;
   compiler->localCount = 0;
@@ -475,6 +489,7 @@ static ObjFunction *endCompiler() {
   disassembleChunk(currentChunk(),
                    function->name != NULL ? function->name->chars : "<script>");
 #endif
+  current = current->enclosing;
   return function;
 }
 static void beginScope() { current->scopeDepth++; }
@@ -611,7 +626,7 @@ static void variable(bool canAssign) {
   namedVariable(parser.previous, canAssign);
 }
 ParseRule rules[] = {
-    [TOKEN_LEFT_PAREN] = {grouping, NULL, PREC_NONE},
+    [TOKEN_LEFT_PAREN] = {grouping, call, PREC_CALL},
     [TOKEN_RIGHT_PAREN] = {NULL, NULL, PREC_NONE},
     [TOKEN_LEFT_BRACE] = {NULL, NULL, PREC_NONE},
     [TOKEN_RIGHT_BRACE] = {NULL, NULL, PREC_NONE},
