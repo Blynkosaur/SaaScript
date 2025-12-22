@@ -578,6 +578,22 @@ static void binary(bool canAssign) {
     return;
   }
 }
+static uint8_t argumentList() {
+  uint8_t argCount = 0;
+  if (!check(TOKEN_RIGHT_PAREN)) {
+    do {
+      expression();
+      argCount++;
+
+    } while (match(TOKEN_COMMA));
+  }
+  consume(TOKEN_RIGHT_PAREN, "Expect ')' after arguments. ");
+  return argCount;
+}
+static void call(bool canAssign) {
+  uint8_t argCount = argumentList();
+  writeBytes(OP_CALL, argCount);
+}
 static void number(bool canAssign) {
   double value = strtod(parser.previous.start, NULL);
   writeConstant(NUMBER_VAL(value));
