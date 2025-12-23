@@ -1,4 +1,4 @@
-# BryteLinker
+# SaaScript
 # 🧠 C Interpreter
 
 A lightweight interpreter for a subset of the C programming language, built for educational and experimental purposes. This project parses and executes C-like syntax, supporting variables, arithmetic, conditionals, and functions.
