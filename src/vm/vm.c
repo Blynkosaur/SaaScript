@@ -8,9 +8,12 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <time.h>
 VM vm;
 
+static Value clockNative(int argCount, Value *args) {
+  return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
+}
 static Value peek(int distance) { return vm.stackTop[-1 - distance]; }
 
 static void resetStack() {
@@ -37,6 +40,13 @@ static void runtimeError(const char *format, ...) {
   }
   resetStack();
 }
+static void defineNative(const char *name, NativeFunction function) {
+  push(OBJ_VAL(copyString(name, (int)strlen(name))));
+  push(OBJ_VAL(newNative(function)));
+  set(&vm.globals, vm.stack[1], PAYLOAD_STRING(vm.stack[0]));
+  pop();
+  pop();
+}
 static bool call(ObjFunction *function, int argCount) {
   if (argCount != function->arity) {
     runtimeError("Expected %d arguments but got %d", function->arity, argCount);
@@ -58,6 +68,13 @@ static bool callValue(Value callee, int argCount) {
     switch (OBJ_TYPE(callee)) {
     case OBJ_FUNCTION:
       return call(PAYLOAD_FUNCTION(callee), argCount);
+    case OBJ_NATIVE: {
+      NativeFunction native = PAYLOAD_NATIVE(callee);
+      Value result = native(argCount, vm.stackTop - argCount);
+      vm.stackTop -= argCount + 1;
+      push(result);
+      return true;
+    }
     default:
       break;
     }
@@ -330,6 +347,7 @@ void initVM() {
   resetStack();
   initTable(&vm.strings);
   initTable(&vm.globals);
+  defineNative("clock", clockNative);
 }
 
 void push(Value value) {

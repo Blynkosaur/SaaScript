@@ -8,6 +8,7 @@
 typedef enum {
   OBJ_STRING,
   OBJ_FUNCTION,
+  OBJ_NATIVE,
 } ObjType;
 
 struct Obj {
@@ -32,7 +33,15 @@ typedef struct {
   StringObj *name;
 } ObjFunction;
 
+typedef Value (*NativeFunction)(int argCount, Value *args);
+typedef struct {
+  Obj obj;
+  NativeFunction function;
+
+} ObjNative;
+
 ObjFunction *newFunction();
+ObjNative *newNative(NativeFunction function);
 
 void printObject(Value value);
 
@@ -52,6 +61,8 @@ static inline bool isObjType(Value value, ObjType type) {
 #define PAYLOAD_CSTRING(value) (((StringObj *)(PAYLOAD_OBJ(value)))->chars)
 #define IS_FUNCTION(value) isObjType(value, OBJ_FUNCTION)
 #define PAYLOAD_FUNCTION(value) ((ObjFunction *)PAYLOAD_OBJ(value))
+#define IS_NATIVE(value) isObjType(value, OBJ_NATIVE)
+#define PAYLOAD_NATIVE(value) (((ObjNative *)PAYLOAD_OBJ(value))->function)
 StringObj *copyString(const char *chars, int length);
 
 StringObj *makeObjWithString(char *chars, int length);

@@ -22,6 +22,11 @@ ObjFunction *newFunction() {
   initChunk(&function->chunk);
   return function;
 }
+ObjNative *newNative(NativeFunction function) {
+  ObjNative *native = malloc(sizeof(ObjNative));
+  native->function = function;
+  return native;
+}
 // FOR THE RECORD, IDK WHY THE CODE ABOVE IS EVEN THERE WHY SO COMPLICATED, JUST
 // CALL MALLOC: IT AIN'T THAT DEEP
 static StringObj *allocateString(char *chars, int length, uint32_t hash) {
@@ -80,6 +85,10 @@ void printObject(Value value) {
   }
   case OBJ_FUNCTION: {
     printFunction(PAYLOAD_FUNCTION(value));
+    break;
+  }
+  case OBJ_NATIVE: {
+    printf("<native function");
     break;
   }
   }
