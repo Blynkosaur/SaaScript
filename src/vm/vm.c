@@ -12,6 +12,7 @@
 VM vm;
 
 static Value peek(int distance) { return vm.stackTop[-1 - distance]; }
+
 static void resetStack() {
   vm.stackTop = vm.stack;
   vm.frameCount = 0;
@@ -28,6 +29,26 @@ static void runtimeError(const char *format, ...) {
   int line = frame->function->chunk.lines[instruction];
   fprintf(stderr, "[line %d] in script \n", line);
   resetStack();
+}
+static bool call(ObjFunction *function, int argCount) {
+  CallFrame *frame = &vm.frames[vm.frameCount++];
+  frame->function = function;
+  frame->ip = function->chunk.code;
+  frame->slots = vm.stackTop - argCount - 1;
+  return true;
+}
+static bool callValue(Value callee, int argCount) {
+
+  if (IS_OBJ(callee)) {
+    switch (OBJ_TYPE(callee)) {
+    case OBJ_FUNCTION:
+      return call(PAYLOAD_FUNCTION(callee), argCount);
+    default:
+      break;
+    }
+  }
+  runtimeError("Can only call functions");
+  return false;
 }
 static bool isFalsey(Value value) {
   return IS_NULL(value) || (IS_BOOL(value) && !PAYLOAD_BOOL(value));
@@ -224,6 +245,14 @@ static InterpretResult run() {
     case OP_LOOP: {
       u_int16_t offset = READ_SHORT();
       frame->ip -= offset;
+      break;
+    }
+    case OP_CALL: {
+      int argCount = READ_BYTE();
+      if (!callValue(peek(argCount), argCount)) {
+        return INTERPRET_RUNTIME_ERROR;
+      }
+      frame = &vm.frames[vm.frameCount - 1];
       break;
     }
     case OP_RETURN: {

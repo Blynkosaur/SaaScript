@@ -477,6 +477,10 @@ static void initCompiler(Compiler *compiler, FunctionType type) {
   compiler->scopeDepth = 0;
   compiler->function = newFunction();
   current = compiler;
+  if (type != TYPE_SCRIPT) {
+    current->function->name =
+        copyString(parser.previous.start, parser.previous.length);
+  }
   Local *local = &current->locals[current->localCount++];
   local->depth = 0;
   local->name.start = "";
