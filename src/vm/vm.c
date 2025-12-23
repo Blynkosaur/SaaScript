@@ -273,7 +273,16 @@ static InterpretResult run() {
     case OP_RETURN: {
       // printValue(pop());
       // printf("\n");
-      return INTERPRET_OK;
+      Value result = pop();
+      vm.frameCount--;
+      if (vm.frameCount == 0) {
+        pop();
+        return INTERPRET_OK;
+      }
+      vm.stackTop = frame->slots;
+      push(result);
+      frame = &vm.frames[vm.frameCount - 1];
+      break;
     }
     }
 #ifdef DEBUG_TRACE_EXECUTION
