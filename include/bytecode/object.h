@@ -2,6 +2,7 @@
 
 #define bryte_object_h
 #include "../common.h"
+#include "./chunk.h"
 #include "./value.h"
 #include "chunk.h"
 
