@@ -4,10 +4,12 @@
 #include "../common.h"
 #include "./chunk.h"
 #include "./value.h"
+#include "chunk.h"
 
 typedef enum {
-  OBJ_FUNCTION,
   OBJ_STRING,
+  OBJ_FUNCTION,
+  OBJ_NATIVE,
 } ObjType;
 
 struct Obj {
@@ -27,11 +29,20 @@ struct StringObj {
 };
 typedef struct {
   Obj obj;
-  int param_count;
+  int arity;
   Chunk chunk;
   StringObj *name;
+} ObjFunction;
 
-} FunctionObj;
+typedef Value (*NativeFunction)(int argCount, Value *args);
+typedef struct {
+  Obj obj;
+  NativeFunction function;
+
+} ObjNative;
+
+ObjFunction *newFunction();
+ObjNative *newNative(NativeFunction function);
 
 void printObject(Value value);
 
@@ -46,13 +57,15 @@ static inline bool isObjType(Value value, ObjType type) {
 // copy and paste the code so if we called isObjType(pop())
 //  pop() would be called twice, ig be careful
 #define IS_STRING(value) isObjType(value, OBJ_STRING)
-#define IS_FUNCTION(value) isObjType(value, OBJ_FUNCTION)
 #define PAYLOAD_STRING(value)                                                  \
   ((StringObj *)(PAYLOAD_OBJ(value))) // --> converts value's obj* to stringobj*
 #define PAYLOAD_CSTRING(value) (((StringObj *)(PAYLOAD_OBJ(value)))->chars)
-#define PAYLOAD_FUNCTION(value) ((FunctionObj *)PAYLOAD_OBJ(value))
+#define IS_FUNCTION(value) isObjType(value, OBJ_FUNCTION)
+#define PAYLOAD_FUNCTION(value) ((ObjFunction *)PAYLOAD_OBJ(value))
+#define IS_NATIVE(value) isObjType(value, OBJ_NATIVE)
+#define PAYLOAD_NATIVE(value) (((ObjNative *)PAYLOAD_OBJ(value))->function)
 StringObj *copyString(const char *chars, int length);
 
 StringObj *makeObjWithString(char *chars, int length);
-FunctionObj *makeFunction();
+
 #endif

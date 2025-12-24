@@ -4,7 +4,7 @@
 #include "../bytecode/chunk.h"
 #include "../bytecode/object.h"
 #include "../common.h"
-#include "../vm/vm.h"
-FunctionObj *compile(const char *source);
+
+ObjFunction *compile(const char *source);
 
 #endif

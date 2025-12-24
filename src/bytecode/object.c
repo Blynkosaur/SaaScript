@@ -15,16 +15,20 @@
 //     object->type = type;
 //     return object;
 // }
-
+ObjFunction *newFunction() {
+  ObjFunction *function = malloc(sizeof(ObjFunction));
+  function->arity = 0;
+  function->name = NULL;
+  initChunk(&function->chunk);
+  return function;
+}
+ObjNative *newNative(NativeFunction function) {
+  ObjNative *native = malloc(sizeof(ObjNative));
+  native->function = function;
+  return native;
+}
 // FOR THE RECORD, IDK WHY THE CODE ABOVE IS EVEN THERE WHY SO COMPLICATED, JUST
 // CALL MALLOC: IT AIN'T THAT DEEP
-FunctionObj *makeFunction() {
-  FunctionObj *new_function = malloc(sizeof(FunctionObj));
-  new_function->param_count = 0;
-  new_function->name = NULL;
-  initChunk(&new_function->chunk);
-  return new_function;
-}
 static StringObj *allocateString(char *chars, int length, uint32_t hash) {
   StringObj *string = malloc(sizeof(StringObj));
   string->obj.next = vm.objectsHead;
@@ -65,14 +69,14 @@ StringObj *copyString(const char *chars, int length) {
 
   return allocateString(heapChars, length, hash);
 }
-
-static void printFunction(FunctionObj *function) {
+static void printFunction(ObjFunction *function) {
   if (function->name == NULL) {
     printf("<script>");
     return;
   }
-  printf("<fn %s>", function->name->chars);
+  printf("<fn %s", function->name->chars);
 }
+
 void printObject(Value value) {
   switch (OBJ_TYPE(value)) {
   case OBJ_STRING: {
@@ -81,6 +85,10 @@ void printObject(Value value) {
   }
   case OBJ_FUNCTION: {
     printFunction(PAYLOAD_FUNCTION(value));
+    break;
+  }
+  case OBJ_NATIVE: {
+    printf("<native function");
     break;
   }
   }

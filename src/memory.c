@@ -15,11 +15,16 @@ static void freeObject(Obj *object) {
     break;
   }
   case OBJ_FUNCTION: {
-    FunctionObj *function = (FunctionObj *)object;
-    printf("Freed function: %s\n", function->name->chars);
+    ObjFunction *function = (ObjFunction *)object;
     freeChunk(&function->chunk);
-    free(function->name->chars);
-    free(function->name);
+    StringObj *string = function->name;
+    printf("Freed string in function: %s\n", string->chars);
+    free(string->chars);
+    free(object);
+    break;
+  }
+  case OBJ_NATIVE: {
+    free(object);
     break;
   }
   }
