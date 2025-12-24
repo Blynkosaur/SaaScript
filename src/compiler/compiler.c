@@ -339,7 +339,17 @@ static void forLoop() {
     exitJump = writeJump(OP_JUMP_IF_FALSE);
     writeByte(OP_POP);
   }
-  consume(TOKEN_RIGHT_PAREN, "Expected ')' after for clauses.");
+  if (!match(TOKEN_RIGHT_PAREN)) {
+    int bodyJump = writeJump(OP_JUMP);
+    int increment = currentChunk()->count;
+    expression();
+    writeByte(OP_POP);
+    consume(TOKEN_RIGHT_PAREN, "Expected ')' after for clauses");
+
+    writeLoop(loopStart);
+    loopStart = increment;
+    patchJump(bodyJump);
+  }
   statement();
   writeLoop(loopStart);
   if (exitJump != -1) {
