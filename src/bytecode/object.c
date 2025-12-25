@@ -18,12 +18,14 @@
 ObjFunction *newFunction() {
   ObjFunction *function = malloc(sizeof(ObjFunction));
   function->arity = 0;
+  function->obj.type = OBJ_FUNCTION;
   function->name = NULL;
   initChunk(&function->chunk);
   return function;
 }
 ObjNative *newNative(NativeFunction function) {
   ObjNative *native = malloc(sizeof(ObjNative));
+  native->obj.type = OBJ_NATIVE;
   native->function = function;
   return native;
 }
