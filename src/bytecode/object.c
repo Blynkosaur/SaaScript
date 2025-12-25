@@ -29,6 +29,12 @@ ObjNative *newNative(NativeFunction function) {
   native->function = function;
   return native;
 }
+ObjClosure *newClosure(ObjFunction *function) {
+  ObjClosure *closure = malloc(sizeof(ObjClosure));
+  closure->obj.type = OBJ_CLOSURE;
+  closure->function = function;
+  return closure;
+}
 // FOR THE RECORD, IDK WHY THE CODE ABOVE IS EVEN THERE WHY SO COMPLICATED, JUST
 // CALL MALLOC: IT AIN'T THAT DEEP
 static StringObj *allocateString(char *chars, int length, uint32_t hash) {
@@ -91,6 +97,10 @@ void printObject(Value value) {
   }
   case OBJ_NATIVE: {
     printf("<native function");
+    break;
+  }
+  case OBJ_CLOSURE: {
+    printFunction(PAYLOAD_CLOSURE(value)->function);
     break;
   }
   }

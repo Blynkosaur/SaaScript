@@ -10,6 +10,7 @@ typedef enum {
   OBJ_STRING,
   OBJ_FUNCTION,
   OBJ_NATIVE,
+  OBJ_CLOSURE,
 } ObjType;
 
 struct Obj {
@@ -33,6 +34,13 @@ typedef struct {
   Chunk chunk;
   StringObj *name;
 } ObjFunction;
+
+typedef struct {
+  Obj obj;
+  ObjFunction *function;
+
+} ObjClosure;
+ObjClosure *newClosure(ObjFunction *function);
 
 typedef Value (*NativeFunction)(int argCount, Value *args);
 typedef struct {
@@ -64,6 +72,8 @@ static inline bool isObjType(Value value, ObjType type) {
 #define PAYLOAD_FUNCTION(value) ((ObjFunction *)PAYLOAD_OBJ(value))
 #define IS_NATIVE(value) isObjType(value, OBJ_NATIVE)
 #define PAYLOAD_NATIVE(value) (((ObjNative *)PAYLOAD_OBJ(value))->function)
+#define IS_CLOSURE(value) isObjType(value, OBJ_CLOSURE)
+#define PAYLOAD_CLOSURE(value) ((ObjClosure *)PAYLOAD_OBJ(value))
 StringObj *copyString(const char *chars, int length);
 
 StringObj *makeObjWithString(char *chars, int length);
