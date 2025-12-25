@@ -11,4 +11,4 @@ A lightweight interpreter for a subset of the C programming language, built for 
 - 🧰 Function definitions and calls
 - 🐞 Basic error handling and debugging output
 - 📄 Optional REPL or script execution mode
-- Maybe some OOP (We'll see..)
+- NO OOP, because who needs classes?
