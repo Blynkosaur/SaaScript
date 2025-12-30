@@ -189,7 +189,7 @@ static void function(FunctionType type) {
   consume(TOKEN_LEFT_BRACE, "Expected '{' after function name.");
   block();
   ObjFunction *function = endCompiler();
-  writeBytes(OP_CONSTANT, makeConstant(OBJ_VAL(function)));
+  writeBytes(OP_CLOSURE, makeConstant(OBJ_VAL(function)));
 }
 static void functionDeclaration() {
   uint8_t global = parseVariable("Expected function name.");
