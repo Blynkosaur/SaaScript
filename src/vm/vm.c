@@ -47,9 +47,9 @@ static void defineNative(const char *name, NativeFunction function) {
   pop();
   pop();
 }
-static bool call(ObjFunction *function, int argCount) {
-  if (argCount != function->arity) {
-    runtimeError("Expected %d arguments but got %d", function->arity, argCount);
+static bool call(ObjClosure *closure, int argCount) {
+  if (argCount != closure->function->arity) {
+    runtimeError("Expected %d arguments but got %d", closure->function->arity, argCount);
     return false;
   }
   if (vm.frameCount == FRAMES_MAX) {
