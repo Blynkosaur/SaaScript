@@ -66,6 +66,8 @@ static bool callValue(Value callee, int argCount) {
 
   if (IS_OBJ(callee)) {
     switch (OBJ_TYPE(callee)) {
+    case OBJ_CLOSURE:
+      return call(PAYLOAD_CLOSURE(callee), argCount);
     case OBJ_FUNCTION:
       return call(PAYLOAD_FUNCTION(callee), argCount);
     case OBJ_NATIVE: {
@@ -285,6 +287,12 @@ static InterpretResult run() {
         return INTERPRET_RUNTIME_ERROR;
       }
       frame = &vm.frames[vm.frameCount - 1];
+      break;
+    }
+    case OP_CLOSURE: {
+      ObjFunction *function = PAYLOAD_FUNCTION(READ_CONSTANT());
+      ObjClosure *closure = newClosure(function);
+      push(OBJ_VAL(closure));
       break;
     }
     case OP_RETURN: {
