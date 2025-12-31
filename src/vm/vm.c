@@ -28,7 +28,7 @@ static void runtimeError(const char *format, ...) {
   fputs("\n", stderr);
   for (int i = vm.frameCount - 1; i >= 0; i--) {
     CallFrame *frame = &vm.frames[i];
-    ObjFunction *function = frame->function;
+    ObjFunction *function = frame->closure->function;
     size_t instruction = frame->ip - function->chunk.code - 1;
     fprintf(stderr, "[line %d] in", function->chunk.lines[instruction]);
     if (function->name == NULL) {
@@ -49,7 +49,8 @@ static void defineNative(const char *name, NativeFunction function) {
 }
 static bool call(ObjClosure *closure, int argCount) {
   if (argCount != closure->function->arity) {
-    runtimeError("Expected %d arguments but got %d", closure->function->arity, argCount);
+    runtimeError("Expected %d arguments but got %d", closure->function->arity,
+                 argCount);
     return false;
   }
   if (vm.frameCount == FRAMES_MAX) {
@@ -57,8 +58,8 @@ static bool call(ObjClosure *closure, int argCount) {
     return false;
   }
   CallFrame *frame = &vm.frames[vm.frameCount++];
-  frame->function = function;
-  frame->ip = function->chunk.code;
+  frame->closure = closure;
+  frame->ip = closure->function->chunk.code;
   frame->slots = vm.stackTop - argCount - 1;
   return true;
 }
@@ -106,7 +107,8 @@ static InterpretResult run() {
 #define READ_BYTE()                                                            \
   (*frame->ip++) // dereferences vm.ip (index pointer) and moves the pointer
                  // more
-#define READ_CONSTANT() (frame->function->chunk.constants.values[READ_BYTE()])
+#define READ_CONSTANT()                                                        \
+  (frame->closure->function->chunk.constants.values[READ_BYTE()])
 #define READ_STRING() PAYLOAD_STRING(READ_CONSTANT())
 #define READ_SHORT()                                                           \
   (frame->ip += 2, (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
@@ -126,10 +128,12 @@ static InterpretResult run() {
 
 #ifdef DEBUG_TRACE_EXECUTION // only for debugging
     printf("vm.ip: %p\n", frame->ip);
-    printf("vm.chunk->code: %p, offset: %ld\n", &frame->function->chunk.code,
-           frame->ip - frame->function->chunk.code);
-    disassembleInstruction(&frame->function->chunk,
-                           (int)(frame->ip - frame->function->chunk.code));
+    printf("vm.chunk->code: %p, offset: %ld\n",
+           &frame->closure->function->chunk.code,
+           frame->ip - frame->closure->function->chunk.code);
+    disassembleInstruction(
+        &frame->closure->function->chunk,
+        (int)(frame->ip - frame->closure->function->chunk.code));
 
 #endif
     uint8_t instruction;
