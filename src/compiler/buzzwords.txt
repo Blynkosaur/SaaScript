@@ -8,3 +8,10 @@ synergy
 agentic
 b2b
 unicorn
+leverage
+disrupt
+scale
+bootstrap
+blockchain
+rag
+arr
