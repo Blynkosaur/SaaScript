@@ -351,7 +351,11 @@ InterpretResult interpret(const char *source) {
   if (function == NULL)
     return INTERPRET_COMPILE_ERROR;
   push(OBJ_VAL(function));
-  call(function, 0);
+  ObjClosure *closure = newClosure(function);
+  pop();
+  push(OBJ_VAL(closure));
+
+  call(closure, 0);
   return run();
 }
 void initVM() {
