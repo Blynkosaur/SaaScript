@@ -69,7 +69,7 @@ static bool check(TokenType type);
 static ParseRule *getRule(TokenType type);
 static void parsePrecedence(Precedence precedence);
 static u_int8_t makeConstant(Value value);
-static int writeLoop(int loopStart);
+static void writeLoop(int loopStart);
 static bool match(TokenType type);
 static void defineVariable(uint8_t global);
 static void consume(TokenType type, const char *message);
@@ -457,7 +457,7 @@ static void writeBytes(uint8_t byte1, uint8_t byte2) {
   writeByte(byte1);
   writeByte(byte2);
 }
-static int writeLoop(int loopStart) {
+static void writeLoop(int loopStart) {
   writeByte(OP_LOOP);
   int jump = currentChunk()->count - loopStart + 2;
   if (jump > UINT16_MAX)
