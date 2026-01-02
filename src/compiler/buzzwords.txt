@@ -1,17 +1,16 @@
-mvp
-saas
-native
-ai
-native
-pivot 
-synergy
-agentic
-b2b
-unicorn
-leverage
-disrupt
-scale
-bootstrap
-blockchain
-rag
-arr
+mappings
+==================================================
+agentic      -> TOKEN_FOR     # Agentic loops for iterative actions.
+b2b          -> TOKEN_WHILE   # B2B cycles for sustained processes.
+blockchain   -> TOKEN_NULL    # Blockchain's empty/decentralized null state.
+bootstrap    -> TOKEN_VAR     # Bootstrap initial variables/funding.
+burnout      -> TOKEN_FALSE   # Native primitives (int/string).
+disrupt      -> TOKEN_IF      # Disrupt with conditional breaks.
+leverage     -> TOKEN_PRINT   # Leverage visibility/output gains.
+mvp          -> TOKEN_FUN     # MVP as core function prototype.
+pivot        -> TOKEN_ELSE    # Pivot to alternative paths.
+saas         -> TOKEN_RETURN  # SaaS delivers recurring returns.
+scale        -> TOKEN_OR      # Scale via options/disjunction.
+synergy      -> TOKEN_AND     # Synergy combines conditions.
+unicorn      -> TOKEN_TRUE    # Unicorn achievement as true success.
+
