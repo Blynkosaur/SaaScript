@@ -92,6 +92,23 @@ static TokenType saasType() {
   switch (scanner.start[0]) {
   case 'a':
     return checkKeyword(1, 6, "gentic", TOKEN_FOR);
+  case 'b': {
+    if ((scanner.current - scanner.start) > 1) {
+      switch (scanner.start[1]) {
+      case '2':
+        return checkKeyword(2, 1, "b", TOKEN_WHILE);
+      case 'l':
+        return checkKeyword(2, 9, "lockchain", TOKEN_NULL);
+      case 'o':
+        return checkKeyword(2, 7, "otstrap", TOKEN_VAR);
+      case 'u':
+        return checkKeyword(2, 5, "rnout", TOKEN_FALSE);
+      default:
+        return TOKEN_IDENTIFIER;
+      }
+      return TOKEN_IDENTIFIER;
+    }
+  }
 
   case 'd':
     return checkKeyword(1, 6, "isrupt", TOKEN_IF);
@@ -102,9 +119,25 @@ static TokenType saasType() {
   case 'p':
     return checkKeyword(1, 4, "ivot", TOKEN_ELSE);
   case 's':
-    return checkKeyword(1, 3, "aas", TOKEN_RETURN);
+
+    if ((scanner.current - scanner.start) > 1) {
+      switch (scanner.start[1]) {
+      case 'a':
+        return checkKeyword(2, 2, "as", TOKEN_RETURN);
+      case 'c':
+        return checkKeyword(2, 3, "ale", TOKEN_OR);
+      case 'y':
+        return checkKeyword(2, 5, "nergy", TOKEN_AND);
+      deafult:
+        return TOKEN_IDENTIFIER;
+      }
+    }
+    return TOKEN_IDENTIFIER;
+
   case 'u':
     return checkKeyword(1, 6, "nicorn", TOKEN_TRUE);
+  default:
+    return TOKEN_IDENTIFIER;
   }
 }
 static TokenType identifierType() {
