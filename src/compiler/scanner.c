@@ -232,7 +232,12 @@ static bool isAlpha(char c) {
 static Token identifier() {
   while (isAlpha(peek()) || isDigit(peek()))
     advance();
+#ifdef SAAS_MODE
   return makeToken(saasType());
+#endif
+#ifndef SAAS_MODE
+  return makeToken(identifierType());
+#endif
   // => what the fuck idk why not just return TOKEN_IDENTIFIER
   // maybe for reserved words or user made identifiers(i.e. variables)
 }
