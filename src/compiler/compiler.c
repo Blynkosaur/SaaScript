@@ -319,27 +319,35 @@ static void whileLoop() {
 }
 static void forLoop() {
   beginScope();
-  consume(TOKEN_LEFT_PAREN, "'(' expected after for keyword");
+  consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
+
   if (match(TOKEN_SEMICOLON)) {
-    // no initializer
+
   } else if (match(TOKEN_VAR)) {
     varDeclaration();
   } else {
     expressionStatement();
   }
-
   int loopStart = currentChunk()->count;
-  // condition clause
   int exitJump = -1;
   if (!match(TOKEN_SEMICOLON)) {
     expression();
-    consume(TOKEN_SEMICOLON, "Expected ';' after loop condition");
+    consume(TOKEN_SEMICOLON, "Expect ';' after loop condition.");
 
-    // exit loop if false
     exitJump = writeJump(OP_JUMP_IF_FALSE);
     writeByte(OP_POP);
   }
-  consume(TOKEN_RIGHT_PAREN, "Expected ')' after for clauses.");
+  if (!match(TOKEN_RIGHT_PAREN)) {
+    int bodyJump = writeJump(OP_JUMP);
+    int incrementStart = currentChunk()->count;
+    expression();
+    writeByte(OP_POP);
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
+
+    writeLoop(loopStart);
+    loopStart = incrementStart;
+    patchJump(bodyJump);
+  }
   statement();
   writeLoop(loopStart);
   if (exitJump != -1) {
