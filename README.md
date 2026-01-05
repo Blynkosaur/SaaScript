@@ -48,3 +48,5 @@ See `src/compiler/buzzwords.txt` for the complete mapping with explanations.
 ## 💡 Philosophy
 
 **No Classes, No OOP** - This language intentionally omits object-oriented programming features. Why? Because when you're shipping fast, there's no time for design patterns, inheritance hierarchies, or abstract interfaces. Keep it simple, keep it functional, keep it shipping.
+
+**No Arrays** - Arrays require you to know how many things you'll have *before* you have them. That's planning. That's architecture. That's thinking ahead. When you're shipping, you don't know how many users you'll have, how many features you'll add, or how many bugs you'll ship. Why should your data structures be any different? Arrays are for people who plan. We're for people who ship.
