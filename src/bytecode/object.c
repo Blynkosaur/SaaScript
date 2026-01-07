@@ -89,6 +89,7 @@ ObjUpvalue *newUpvalue(Value *slot) {
   upvalue->obj.type = OBJ_UPVALUE;
   upvalue->location = slot;
   upvalue->next = NULL;
+  upvalue->closed = NULL_VAL;
   return upvalue;
 }
 static void printFunction(ObjFunction *function) {
