@@ -1,0 +1,23 @@
+# Loops: b2b (while) and agentic (for)
+leverage "Counting from 1 to 5 with b2b:";
+bootstrap i = 1;
+b2b (i <= 5) {
+    leverage i;
+    i = i + 1;
+}
+
+leverage "";
+leverage "Counting from 1 to 5 with agentic:";
+agentic (bootstrap j = 1; j <= 5; j = j + 1) {
+    leverage j;
+}
+
+leverage "";
+leverage "Sum of numbers 1 to 10:";
+bootstrap sum = 0;
+bootstrap counter = 1;
+b2b (counter <= 10) {
+    sum = sum + counter;
+    counter = counter + 1;
+}
+leverage sum;

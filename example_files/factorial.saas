@@ -1,0 +1,16 @@
+# Calculate factorial recursively
+mvp factorial(n) {
+    disrupt (n <= 1) {
+        saas 1;
+    }
+    saas n * factorial(n - 1);
+}
+
+leverage "Factorial of 5:";
+bootstrap result = factorial(5);
+leverage result;
+
+leverage "";
+leverage "Factorial of 7:";
+bootstrap result2 = factorial(7);
+leverage result2;

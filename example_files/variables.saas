@@ -1,0 +1,14 @@
+# Variables and basic arithmetic
+bootstrap x = 10;
+bootstrap y = 5;
+bootstrap sum = x + y;
+bootstrap product = x * y;
+
+leverage "x = ";
+leverage x;
+leverage "y = ";
+leverage y;
+leverage "sum = ";
+leverage sum;
+leverage "product = ";
+leverage product;

@@ -170,8 +170,11 @@ static InterpretResult run() {
     switch (instruction = READ_BYTE()) {
     case OP_CONSTANT: {
       Value constant = READ_CONSTANT();
+#ifdef DEBUG_PRINT_CODE
       printf("PUSHED: ");
       printValue(constant);
+
+#endif
       push(constant);
       printf("\n");
       break;
@@ -405,10 +408,10 @@ static InterpretResult run() {
 InterpretResult interpret(const char *source) {
   ObjFunction *function = compile(source);
   if (function == NULL) {
-    // if (vm.repl) {
-    //   freeVM();
-    //   initVM();
-    // }
+    if (vm.repl) {
+      freeVM();
+      initVM();
+    }
     return INTERPRET_COMPILE_ERROR;
   }
   push(OBJ_VAL(function));

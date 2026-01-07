@@ -1,0 +1,25 @@
+# Basic arithmetic operations
+bootstrap a = 15;
+bootstrap b = 4;
+
+leverage "a = ";
+leverage a;
+leverage "b = ";
+leverage b;
+leverage "";
+
+leverage "Addition: a + b = ";
+leverage a + b;
+
+leverage "Subtraction: a - b = ";
+leverage a - b;
+
+leverage "Multiplication: a * b = ";
+leverage a * b;
+
+leverage "Division: a / b = ";
+leverage a / b;
+
+leverage "";
+leverage "Order of operations: (a + b) * 2 = ";
+leverage (a + b) * 2;

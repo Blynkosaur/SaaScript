@@ -1,0 +1,20 @@
+# Conditional statements with disrupt and pivot
+bootstrap age = 20;
+
+disrupt (age >= 18) {
+    leverage "You are an adult";
+} pivot {
+    leverage "You are a minor";
+}
+
+bootstrap score = 85;
+
+disrupt (score >= 90) {
+    leverage "Grade: A";
+} pivot disrupt (score >= 80) {
+    leverage "Grade: B";
+} pivot disrupt (score >= 70) {
+    leverage "Grade: C";
+} pivot {
+    leverage "Grade: F";
+}

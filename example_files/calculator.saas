@@ -1,0 +1,59 @@
+# Simple calculator with functions
+mvp add(a, b) {
+    saas a + b;
+}
+
+mvp subtract(a, b) {
+    saas a - b;
+}
+
+mvp multiply(a, b) {
+    saas a * b;
+}
+
+mvp divide(a, b) {
+    disrupt (b == 0) {
+        leverage "Error: Division by zero!";
+        saas blockchain;
+    }
+    saas a / b;
+}
+
+mvp power(base, exp) {
+    disrupt (exp == 0) {
+        saas 1;
+    }
+    bootstrap result = 1;
+    bootstrap i = 0;
+    b2b (i < exp) {
+        result = result * base;
+        i = i + 1;
+    }
+    saas result;
+}
+
+# Test the calculator functions
+leverage "Calculator Examples:";
+leverage "";
+
+bootstrap num1 = 10;
+bootstrap num2 = 3;
+
+leverage "10 + 3 = ";
+leverage add(num1, num2);
+
+leverage "10 - 3 = ";
+leverage subtract(num1, num2);
+
+leverage "10 * 3 = ";
+leverage multiply(num1, num2);
+
+leverage "10 / 3 = ";
+leverage divide(num1, num2);
+
+leverage "2^8 = ";
+leverage power(2, 8);
+
+leverage "";
+leverage "Testing division by zero:";
+divide(5, 0);

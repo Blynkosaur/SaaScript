@@ -70,7 +70,8 @@ static void skipWhitespace() {
       advance();
       break;
     case '#': // for comments
-      while (peekNext() != '\n' && !isAtEnd()) {
+      advance();
+      while (peek() != '\n' && !isAtEnd()) {
         advance();
       }
       break;
