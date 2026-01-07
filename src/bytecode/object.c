@@ -88,6 +88,7 @@ ObjUpvalue *newUpvalue(Value *slot) {
   ObjUpvalue *upvalue = malloc(sizeof(ObjUpvalue));
   upvalue->obj.type = OBJ_UPVALUE;
   upvalue->location = slot;
+  upvalue->next = NULL;
   return upvalue;
 }
 static void printFunction(ObjFunction *function) {

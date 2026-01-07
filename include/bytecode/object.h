@@ -37,9 +37,10 @@ typedef struct {
   StringObj *name;
 } ObjFunction;
 
-typedef struct {
+typedef struct ObjUpvalue {
   Obj obj;
   Value *location;
+  struct ObjUpvalue *next;
 } ObjUpvalue;
 typedef struct {
   Obj obj;

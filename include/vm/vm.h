@@ -20,7 +20,7 @@ typedef struct {
   Obj *objectsHead;
   Table strings; // for string objects to be interned
   Table globals; // for global variables
-
+  ObjUpvalue *openUpvalues;
 } VM;
 
 extern VM vm;

@@ -19,6 +19,7 @@ static Value peek(int distance) { return vm.stackTop[-1 - distance]; }
 static void resetStack() {
   vm.stackTop = vm.stack;
   vm.frameCount = 0;
+  vm.openUpvalues = NULL;
 }
 static void runtimeError(const char *format, ...) {
   va_list args;
@@ -70,7 +71,7 @@ static bool callValue(Value callee, int argCount) {
     case OBJ_CLOSURE:
       return call(PAYLOAD_CLOSURE(callee), argCount);
     case OBJ_FUNCTION:
-      return call(PAYLOAD_FUNCTION(callee), argCount);
+      return call(PAYLOAD_CLOSURE(callee), argCount);
     case OBJ_NATIVE: {
       NativeFunction native = PAYLOAD_NATIVE(callee);
       Value result = native(argCount, vm.stackTop - argCount);
@@ -86,7 +87,22 @@ static bool callValue(Value callee, int argCount) {
   return false;
 }
 static ObjUpvalue *captureUpvalue(Value *local) {
+  ObjUpvalue *prev = NULL;
+  ObjUpvalue *current = vm.openUpvalues;
+  while (current != NULL && current->location > local) {
+    prev = current;
+    current = current->next;
+  }
+  if (current != NULL && current->location == local) {
+    return current;
+  }
   ObjUpvalue *createdUpvalue = newUpvalue(local);
+  createdUpvalue->next = current;
+  if (prev == NULL) {
+    vm.openUpvalues = createdUpvalue;
+  } else {
+    prev->next = createdUpvalue;
+  }
   return createdUpvalue;
 }
 static bool isFalsey(Value value) {

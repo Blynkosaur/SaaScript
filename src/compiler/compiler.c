@@ -40,6 +40,7 @@ typedef struct {
 typedef struct {
   Token name;
   int depth;
+  bool isCaptured;
 } Local;
 typedef struct {
   uint8_t index;
@@ -250,6 +251,7 @@ static int resolveUpvalue(Compiler *compiler, Token *name) {
     return -1;
   int local = resolveLocal(compiler->enclosing, name);
   if (local != -1) {
+    compiler->enclosing->locals[local].isCaptured = true;
     return addUpValue(compiler, (uint8_t)local, true);
   }
   int upvalue = resolveUpvalue(compiler->enclosing, name);
@@ -266,6 +268,7 @@ static void addLocal(Token name) {
   Local *local = &current->locals[current->localCount++];
   local->name = name;
   local->depth = -1;
+  local->isCaptured = false;
 }
 
 static void declareVariable() {
@@ -524,6 +527,7 @@ static void initCompiler(Compiler *compiler, FunctionType type) {
   compiler->localCount = 0;
   compiler->scopeDepth = 0;
   compiler->function = newFunction();
+
   current = compiler;
   if (type != TYPE_SCRIPT) {
     current->function->name =
@@ -531,6 +535,7 @@ static void initCompiler(Compiler *compiler, FunctionType type) {
   }
   Local *local = &current->locals[current->localCount++];
   local->depth = 0;
+  local->isCaptured = false;
   local->name.start = "";
   local->name.length = 0;
 }
@@ -549,7 +554,11 @@ static void endScope() {
   current->scopeDepth--;
   while (current->localCount > 0 &&
          current->locals[current->localCount - 1].depth > current->scopeDepth) {
-    writeByte(OP_POP);
+    if (current->locals[current->localCount - 1].isCaptured) {
+      writeByte(OP_CLOSE_UPVALUE);
+    } else {
+      writeByte(OP_POP);
+    }
     current->localCount--;
   }
 }
