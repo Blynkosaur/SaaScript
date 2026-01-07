@@ -196,6 +196,10 @@ static void function(FunctionType type) {
   block();
   ObjFunction *function = endCompiler();
   writeBytes(OP_CLOSURE, makeConstant(OBJ_VAL(function)));
+  for (int i = 0; i < function->upvalueCount; i++) {
+    writeByte(compiler.upvalues[i].isLocal ? 1 : 0);
+    writeByte(compiler.upvalues[i].index);
+  }
 }
 static void functionDeclaration() {
   uint8_t global = parseVariable("Expected function name.");
