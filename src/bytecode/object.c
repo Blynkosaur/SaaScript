@@ -78,6 +78,12 @@ StringObj *copyString(const char *chars, int length) {
 
   return allocateString(heapChars, length, hash);
 }
+ObjUpvalue *newUpvalue(Value *slot) {
+  ObjUpvalue *upvalue = malloc(sizeof(ObjUpvalue));
+  upvalue->obj.type = OBJ_UPVALUE;
+  upvalue->location = slot;
+  return upvalue;
+}
 static void printFunction(ObjFunction *function) {
   if (function->name == NULL) {
     printf("<script>");
@@ -102,6 +108,10 @@ void printObject(Value value) {
   }
   case OBJ_CLOSURE: {
     printFunction(PAYLOAD_CLOSURE(value)->function);
+    break;
+  }
+  case OBJ_UPVALUE: {
+    printf("upvalue");
     break;
   }
   }
