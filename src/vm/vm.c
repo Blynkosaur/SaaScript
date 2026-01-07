@@ -176,7 +176,9 @@ static InterpretResult run() {
 
 #endif
       push(constant);
+#ifdef DEBUG_PRINT_CODE
       printf("\n");
+#endif
       break;
     }
     case OP_GREATER:
@@ -254,7 +256,7 @@ static InterpretResult run() {
       break;
     }
     case OP_PRINT: {
-      printf("Printed: ");
+      // printf(">> ");
       printValue(pop());
       printf("\n");
       break;
