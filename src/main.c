@@ -2,6 +2,7 @@
 #include "../include/common.h"
 #include "../include/debug.h"
 #include "../include/vm/vm.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,12 +18,16 @@ repl() { // REPL read eval print loop when you just run >>python and puts u
 
       break;
     }
-    if (strncmp(line, "quit()", 6) == 0) {
+    if (strncmp(line, "quit", 4) == 0 || strncmp(line, "exit", 4) == 0) {
 
-      fprintf(stdout, "Exited\n");
+      fprintf(stdout, "Byebye, can't wait for another b2b saas! :) \n");
       break;
     }
-    interpret(line);
+    InterpretResult result = interpret(line);
+    // if (result != INTERPRET_OK) {
+    //   freeVM();
+    //   initVM();
+    // }
   }
 }
 
@@ -79,11 +84,13 @@ int main(int argc, const char *argv[]) {
   INDEX TO ACCESS NEXT
   */
   if (argc == 1) {
+    vm.repl = true;
     repl();
   } else if (argc == 2) {
+    vm.repl = false;
     runFile(argv[1]);
   } else {
-    fprintf(stderr, "usage: bryte [path]\n");
+    fprintf(stderr, "usage: saas [path]\n");
     exit(64);
   }
 

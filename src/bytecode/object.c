@@ -39,7 +39,7 @@ ObjClosure *newClosure(ObjFunction *function) {
   closure->obj.type = OBJ_CLOSURE;
   closure->function = function;
   closure->upvalueCount = function->upvalueCount;
-  closure->upavlues = upvalues;
+  closure->upvalues = upvalues;
   return closure;
 }
 // FOR THE RECORD, IDK WHY THE CODE ABOVE IS EVEN THERE WHY SO COMPLICATED, JUST
@@ -68,13 +68,19 @@ StringObj *copyString(const char *chars, int length) {
 
   uint32_t hash = hashFunc(chars, length);
 
+#ifdef DEBUG_PRINT_CODE
   printf("lookup from copyString with %s\n", chars);
+#endif
   Entry *interned = lookUp(&vm.strings, chars, hash, length);
   if (interned != NULL) {
+#ifdef DEBUG_PRINT_CODE
     printf("interned found from copystring at %p\n", interned);
+#endif
     return interned->key;
   }
+#ifdef DEBUG_PRINT_CODE
   printf("nothing found at copyString\n");
+#endif
   char *heapChars = malloc(sizeof(char) * length + 1);
   if (heapChars == NULL) {
     printf("NULL pointer, nothing allocated \n");
@@ -132,7 +138,9 @@ StringObj *makeObjWithString(char *chars, int length) {
   if (interned != NULL) {
     free(chars);
 
+#ifdef DEBUG_PRINT_CODE
     printf("interned found from makeObjWithString at %p\n", interned);
+#endif
     return interned->key;
   }
   printf("nothing found at makeObjWithString\n");

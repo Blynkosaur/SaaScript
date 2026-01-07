@@ -46,7 +46,7 @@ typedef struct ObjUpvalue {
 typedef struct {
   Obj obj;
   ObjFunction *function;
-  ObjUpvalue **upavlues;
+  ObjUpvalue **upvalues;
   int upvalueCount;
 
 } ObjClosure;

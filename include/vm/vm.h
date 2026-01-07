@@ -13,6 +13,7 @@ typedef struct {
 } CallFrame;
 
 typedef struct {
+  bool repl;
   CallFrame frames[FRAMES_MAX];
   int frameCount;
   Value stack[STACK_MAX];

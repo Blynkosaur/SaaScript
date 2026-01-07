@@ -151,7 +151,9 @@ static InterpretResult run() {
     push(valueType(b op a));                                                   \
   } while (false)
 
+#ifdef DEBUG_PRINT_CODE
   printf("\n-----INTERPRETING-----\n\n");
+#endif
   for (;;) {
 
 #ifdef DEBUG_TRACE_EXECUTION // only for debugging
@@ -293,12 +295,12 @@ static InterpretResult run() {
     }
     case OP_GET_UPVALUE: {
       uint8_t slot = READ_BYTE();
-      push(*frame->closure->upavlues[slot]->location);
+      push(*frame->closure->upvalues[slot]->location);
       break;
     }
     case OP_SET_UPVALUE: {
       uint8_t slot = READ_BYTE();
-      *frame->closure->upavlues[slot]->location = peek(0);
+      *frame->closure->upvalues[slot]->location = peek(0);
       break;
     }
     case OP_CLOSE_UPVALUE: {
@@ -344,10 +346,10 @@ static InterpretResult run() {
         uint8_t isLocal = READ_BYTE();
         uint8_t index = READ_BYTE();
         if (isLocal) {
-          closure->upavlues[i] = captureUpvalue(frame->slots + index);
+          closure->upvalues[i] = captureUpvalue(frame->slots + index);
 
         } else {
-          closure->upavlues[i] = frame->closure->upavlues[index];
+          closure->upvalues[i] = frame->closure->upvalues[index];
         }
       }
       break;
@@ -402,8 +404,13 @@ static InterpretResult run() {
 }
 InterpretResult interpret(const char *source) {
   ObjFunction *function = compile(source);
-  if (function == NULL)
+  if (function == NULL) {
+    // if (vm.repl) {
+    //   freeVM();
+    //   initVM();
+    // }
     return INTERPRET_COMPILE_ERROR;
+  }
   push(OBJ_VAL(function));
   ObjClosure *closure = newClosure(function);
   pop();

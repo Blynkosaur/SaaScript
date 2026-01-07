@@ -9,7 +9,9 @@ static void freeObject(Obj *object) {
   switch (object->type) {
   case OBJ_STRING: {
     StringObj *string = (StringObj *)object;
+#ifdef DEBUG_PRINT_CODE
     printf("Freed string: %s\n", string->chars);
+#endif
     free(string->chars);
     free(object);
     break;
@@ -17,7 +19,7 @@ static void freeObject(Obj *object) {
   case OBJ_CLOSURE: {
     ObjClosure *closure = (ObjClosure *)object;
     for (int i = 0; i < closure->upvalueCount; i++) {
-      free(closure->upavlues[i]);
+      free(closure->upvalues[i]);
     }
     free(closure);
     break;
@@ -26,7 +28,9 @@ static void freeObject(Obj *object) {
     ObjFunction *function = (ObjFunction *)object;
     freeChunk(&function->chunk);
     StringObj *string = function->name;
+#ifdef DEBUG_PRINT_CODE
     printf("Freed string in function: %s\n", string->chars);
+#endif
     free(string->chars);
     free(object);
     break;

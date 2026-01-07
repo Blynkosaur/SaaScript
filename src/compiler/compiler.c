@@ -1,6 +1,7 @@
 #include "../../include/compiler/compiler.h"
 #include "../../include/compiler/scanner.h"
 #include "../../include/debug.h"
+#include "../../include/vm/vm.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -104,7 +105,9 @@ static void parsePrecedence(Precedence precedence) {
     return;
   }
   bool canAssign = precedence <= PREC_ASSIGNMENT;
+#ifdef DEBUG_PRINT_CODE
   printf("crashed here\n");
+#endif
   prefixRule(canAssign);
   while (precedence <= getRule(parser.current.type)->precedence) {
     advance(); // --> parses the expression until finds something with lower
@@ -122,6 +125,7 @@ static void parsePrecedence(Precedence precedence) {
 static void errorAt(Token *token, const char *message) {
   if (parser.cooked)
     return;
+  parser.cooked = true;
   fprintf(stderr, "[line %d] Error ", token->line);
   if (token->type == TOKEN_EOF) {
     fprintf(stderr, " at end");
@@ -445,8 +449,12 @@ static void declaration() {
 
     statement();
   }
-  // if (parser.cooked)
-  //     synchronize();
+  if (parser.cooked)
+    if (vm.repl) {
+
+    } else {
+      synchronize();
+    }
 }
 static void statement() {
   if (match(TOKEN_PRINT)) {
@@ -551,8 +559,11 @@ static ObjFunction *endCompiler() {
   writeReturn();
   ObjFunction *function = current->function;
 #ifdef DEBUG_PRINT_CODE
-  disassembleChunk(currentChunk(),
-                   function->name != NULL ? function->name->chars : "<script>");
+  if (parser.hadError) {
+    disassembleChunk(currentChunk(), function->name != NULL
+                                         ? function->name->chars
+                                         : "<script>");
+  }
 #endif
   current = current->enclosing;
   return function;
@@ -764,14 +775,16 @@ ObjFunction *compile(const char *source) {
   initScanner(source);
   // compilingChunk = chunk;
   parser.hadError = false;
-  parser.hadError = false;
+  parser.cooked = false;
+  // current = NULL; // Reset compiler state to prevent dangling pointer
   advance();
   Compiler compiler;
   initCompiler(&compiler, TYPE_SCRIPT);
   while (!match(TOKEN_EOF)) {
     if (parser.cooked) {
       parser.cooked = false; // reset to ok
-      return false;
+      current = NULL;        // Reset compiler state before early return
+      return NULL;
     }
     declaration();
   }
