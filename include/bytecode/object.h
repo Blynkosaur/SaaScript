@@ -39,13 +39,15 @@ typedef struct {
 
 typedef struct {
   Obj obj;
-  ObjFunction *function;
-
-} ObjClosure;
-typedef struct {
-  Obj obj;
   Value *location;
 } ObjUpvalue;
+typedef struct {
+  Obj obj;
+  ObjFunction *function;
+  ObjUpvalue **upavlues;
+  int upvalueCount;
+
+} ObjClosure;
 ObjUpvalue *newUpvalue(Value *slot);
 ObjClosure *newClosure(ObjFunction *function);
 

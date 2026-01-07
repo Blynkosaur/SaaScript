@@ -85,6 +85,10 @@ static bool callValue(Value callee, int argCount) {
   runtimeError("Can only call functions");
   return false;
 }
+static ObjUpvalue *captureUpvalue(Value *local) {
+  ObjUpvalue *createdUpvalue = newUpvalue(local);
+  return createdUpvalue;
+}
 static bool isFalsey(Value value) {
   return IS_NULL(value) || (IS_BOOL(value) && !PAYLOAD_BOOL(value));
 }
@@ -263,6 +267,16 @@ static InterpretResult run() {
       push(frame->slots[slot]);
       break;
     }
+    case OP_GET_UPVALUE: {
+      uint8_t slot = READ_BYTE();
+      push(*frame->closure->upavlues[slot]->location);
+      break;
+    }
+    case OP_SET_UPVALUE: {
+      uint8_t slot = READ_BYTE();
+      *frame->closure->upavlues[slot]->location = peek(0);
+      break;
+    }
     case OP_SET_LOCAL: {
       // sets the slot to the top of the stack
       uint8_t slot = READ_BYTE();
@@ -297,6 +311,16 @@ static InterpretResult run() {
       ObjFunction *function = PAYLOAD_FUNCTION(READ_CONSTANT());
       ObjClosure *closure = newClosure(function);
       push(OBJ_VAL(closure));
+      for (int i = 0; i < closure->upvalueCount; i++) {
+        uint8_t isLocal = READ_BYTE();
+        uint8_t index = READ_BYTE();
+        if (isLocal) {
+          closure->upavlues[i] = captureUpvalue(frame->slots + index);
+
+        } else {
+          closure->upavlues[i] = frame->closure->upavlues[index];
+        }
+      }
       break;
     }
     case OP_RETURN: {

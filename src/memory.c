@@ -16,6 +16,9 @@ static void freeObject(Obj *object) {
   }
   case OBJ_CLOSURE: {
     ObjClosure *closure = (ObjClosure *)object;
+    for (int i = 0; i < closure->upvalueCount; i++) {
+      free(closure->upavlues[i]);
+    }
     free(closure);
     break;
   }

@@ -31,9 +31,15 @@ ObjNative *newNative(NativeFunction function) {
   return native;
 }
 ObjClosure *newClosure(ObjFunction *function) {
+  ObjUpvalue **upvalues = malloc(sizeof(ObjUpvalue *));
+  for (int i = 0; i < function->upvalueCount; i++) {
+    upvalues[i] = NULL;
+  }
   ObjClosure *closure = malloc(sizeof(ObjClosure));
   closure->obj.type = OBJ_CLOSURE;
   closure->function = function;
+  closure->upvalueCount = function->upvalueCount;
+  closure->upavlues = upvalues;
   return closure;
 }
 // FOR THE RECORD, IDK WHY THE CODE ABOVE IS EVEN THERE WHY SO COMPLICATED, JUST
