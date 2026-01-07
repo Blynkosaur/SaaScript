@@ -3,7 +3,7 @@
 CC_FLAG = -I./include
 OTHER_FLAGS = -v -g -Wall
 
-LINK_TARGET = build/main
+LINK_TARGET = build/saas
 
 SRC_FILES = main.c debug.c chunk.c value.c vm.c compiler.c scanner.c object.c memory.c hashmap.c
 

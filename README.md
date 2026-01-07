@@ -11,7 +11,7 @@ To build SaaScript from source:
 make all
 ```
 
-This will create the executable at `build/main`.
+This will create the executable at `build/saas`.
 
 ### Adding to PATH (Optional)
 
@@ -26,7 +26,7 @@ export PATH="$PATH:/path/to/BryteLinker/build"
 
 After adding to PATH, you can run SaaScript from anywhere using:
 ```bash
-main
+saas
 ```
 
 ## 🚀 How It Works
@@ -78,9 +78,9 @@ See `src/compiler/buzzwords.txt` for the complete mapping with explanations.
 Run SaaScript without any arguments to start an interactive REPL (Read-Eval-Print Loop):
 
 ```bash
-./build/main
+./build/saas
 # or if added to PATH:
-main
+saas
 ```
 
 You'll see a `>>>` prompt where you can type SaaScript code interactively. Type `quit` or `exit` to exit the REPL.
@@ -90,9 +90,9 @@ You'll see a `>>>` prompt where you can type SaaScript code interactively. Type 
 To run a SaaScript file (`.saas` extension), pass the file path as an argument:
 
 ```bash
-./build/main script.saas
+./build/saas script.saas
 # or if added to PATH:
-main script.saas
+saas script.saas
 ```
 
 Example `.saas` file:
