@@ -19,6 +19,7 @@ ObjFunction *newFunction() {
   ObjFunction *function = malloc(sizeof(ObjFunction));
   function->arity = 0;
   function->obj.type = OBJ_FUNCTION;
+  function->upvalueCount = 0;
   function->name = NULL;
   initChunk(&function->chunk);
   return function;

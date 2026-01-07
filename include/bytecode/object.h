@@ -31,6 +31,7 @@ struct StringObj {
 typedef struct {
   Obj obj;
   int arity;
+  int upvalueCount;
   Chunk chunk;
   StringObj *name;
 } ObjFunction;
