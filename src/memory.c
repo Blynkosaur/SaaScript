@@ -14,6 +14,14 @@ static void freeObject(Obj *object) {
     free(object);
     break;
   }
+  case OBJ_CLOSURE: {
+    ObjClosure *closure = (ObjClosure *)object;
+    for (int i = 0; i < closure->upvalueCount; i++) {
+      free(closure->upavlues[i]);
+    }
+    free(closure);
+    break;
+  }
   case OBJ_FUNCTION: {
     ObjFunction *function = (ObjFunction *)object;
     freeChunk(&function->chunk);
@@ -27,6 +35,9 @@ static void freeObject(Obj *object) {
     free(object);
     break;
   }
+  case OBJ_UPVALUE:
+    free(object);
+    break;
   }
 }
 void freeObjects() {

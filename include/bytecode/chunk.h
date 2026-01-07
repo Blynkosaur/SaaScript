@@ -10,6 +10,8 @@ typedef enum {
   OP_TRUE,
   OP_FALSE,
   OP_POP,
+  OP_GET_UPVALUE,
+  OP_SET_UPVALUE,
   OP_EQUAL,
   OP_GREATER,
   OP_DEFINE_GLOBAL,
@@ -29,6 +31,8 @@ typedef enum {
   OP_JUMP,
   OP_LOOP,
   OP_CALL,
+  OP_CLOSURE,
+  OP_CLOSE_UPVALUE,
   OP_RETURN,
 } OpCode;
 

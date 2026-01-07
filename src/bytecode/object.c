@@ -19,6 +19,7 @@ ObjFunction *newFunction() {
   ObjFunction *function = malloc(sizeof(ObjFunction));
   function->arity = 0;
   function->obj.type = OBJ_FUNCTION;
+  function->upvalueCount = 0;
   function->name = NULL;
   initChunk(&function->chunk);
   return function;
@@ -28,6 +29,18 @@ ObjNative *newNative(NativeFunction function) {
   native->obj.type = OBJ_NATIVE;
   native->function = function;
   return native;
+}
+ObjClosure *newClosure(ObjFunction *function) {
+  ObjUpvalue **upvalues = malloc(sizeof(ObjUpvalue *));
+  for (int i = 0; i < function->upvalueCount; i++) {
+    upvalues[i] = NULL;
+  }
+  ObjClosure *closure = malloc(sizeof(ObjClosure));
+  closure->obj.type = OBJ_CLOSURE;
+  closure->function = function;
+  closure->upvalueCount = function->upvalueCount;
+  closure->upavlues = upvalues;
+  return closure;
 }
 // FOR THE RECORD, IDK WHY THE CODE ABOVE IS EVEN THERE WHY SO COMPLICATED, JUST
 // CALL MALLOC: IT AIN'T THAT DEEP
@@ -71,6 +84,14 @@ StringObj *copyString(const char *chars, int length) {
 
   return allocateString(heapChars, length, hash);
 }
+ObjUpvalue *newUpvalue(Value *slot) {
+  ObjUpvalue *upvalue = malloc(sizeof(ObjUpvalue));
+  upvalue->obj.type = OBJ_UPVALUE;
+  upvalue->location = slot;
+  upvalue->next = NULL;
+  upvalue->closed = NULL_VAL;
+  return upvalue;
+}
 static void printFunction(ObjFunction *function) {
   if (function->name == NULL) {
     printf("<script>");
@@ -91,6 +112,14 @@ void printObject(Value value) {
   }
   case OBJ_NATIVE: {
     printf("<native function");
+    break;
+  }
+  case OBJ_CLOSURE: {
+    printFunction(PAYLOAD_CLOSURE(value)->function);
+    break;
+  }
+  case OBJ_UPVALUE: {
+    printf("upvalue");
     break;
   }
   }
