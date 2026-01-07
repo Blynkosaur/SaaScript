@@ -11,6 +11,7 @@ static void
 repl() { // REPL read eval print loop when you just run >>python and puts u
   // in that weird ass environment
   char line[1024];
+  printf("SaaScript v.1.0\n");
   while (1) {
     printf(">>> ");
     if (!fgets(line, sizeof(line), stdin)) {
