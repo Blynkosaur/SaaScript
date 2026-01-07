@@ -1,4 +1,5 @@
 # SaaScript
+
 # 🧠 Tech Buzzword Interpreter
 
 An interpreted programming language that uses tech industry buzzwords as its keywords. Built with a bytecode-based virtual machine, this language compiles source code to bytecode and executes it efficiently. Perfect for when you need to ship fast without getting bogged down in design patterns.
@@ -18,13 +19,15 @@ This will create the executable at `build/saas`.
 To use SaaScript without running the executable directly, you can add it to your `$PATH`:
 
 **For bash/zsh:**
+
 ```bash
-export PATH="$PATH:/path/to/BryteLinker/build"
+export PATH="$PATH:/path/to/SaaScript/build"
 ```
 
 **To make it permanent**, add the above line to your `~/.bashrc` or `~/.zshrc` file.
 
 After adding to PATH, you can run SaaScript from anywhere using:
+
 ```bash
 saas
 ```
@@ -43,21 +46,21 @@ The language uses a **buzzword-to-keyword mapping** system where common programm
 
 Instead of traditional keywords like `if`, `while`, or `var`, SaaScript uses tech buzzwords:
 
-| Buzzword | Maps To | Traditional Keyword | Description |
-|----------|---------|---------------------|-------------|
-| `disrupt` | `TOKEN_IF` | `if` | Conditional statements |
-| `b2b` | `TOKEN_WHILE` | `while` | Loops |
-| `bootstrap` | `TOKEN_VAR` | `var` | Variable declarations |
-| `mvp` | `TOKEN_FUN` | `fun` | Function definitions |
-| `leverage` | `TOKEN_PRINT` | `print` | Output/printing |
-| `saas` | `TOKEN_RETURN` | `return` | Return statements |
-| `pivot` | `TOKEN_ELSE` | `else` | Else clauses |
-| `agentic` | `TOKEN_FOR` | `for` | For loops |
-| `synergy` | `TOKEN_AND` | `and` | Logical AND |
-| `scale` | `TOKEN_OR` | `or` | Logical OR |
-| `unicorn` | `TOKEN_TRUE` | `true` | Boolean true |
-| `burnout` | `TOKEN_FALSE` | `false` | Boolean false |
-| `blockchain` | `TOKEN_NULL` | `null` | Null value |
+| Buzzword     | Maps To        | Traditional Keyword | Description            |
+| ------------ | -------------- | ------------------- | ---------------------- |
+| `disrupt`    | `TOKEN_IF`     | `if`                | Conditional statements |
+| `b2b`        | `TOKEN_WHILE`  | `while`             | Loops                  |
+| `bootstrap`  | `TOKEN_VAR`    | `var`               | Variable declarations  |
+| `mvp`        | `TOKEN_FUN`    | `fun`               | Function definitions   |
+| `leverage`   | `TOKEN_PRINT`  | `print`             | Output/printing        |
+| `saas`       | `TOKEN_RETURN` | `return`            | Return statements      |
+| `pivot`      | `TOKEN_ELSE`   | `else`              | Else clauses           |
+| `agentic`    | `TOKEN_FOR`    | `for`               | For loops              |
+| `synergy`    | `TOKEN_AND`    | `and`               | Logical AND            |
+| `scale`      | `TOKEN_OR`     | `or`                | Logical OR             |
+| `unicorn`    | `TOKEN_TRUE`   | `true`              | Boolean true           |
+| `burnout`    | `TOKEN_FALSE`  | `false`             | Boolean false          |
+| `blockchain` | `TOKEN_NULL`   | `null`              | Null value             |
 
 See `src/compiler/buzzwords.txt` for the complete mapping with explanations.
 
@@ -96,6 +99,7 @@ saas script.saas
 ```
 
 Example `.saas` file:
+
 ```saas
 bootstrap x = 10;
 leverage x;
@@ -105,4 +109,4 @@ leverage x;
 
 **No Classes, No OOP** - This language intentionally omits object-oriented programming features. Why? Because when you're shipping fast, there's no time for design patterns, inheritance hierarchies, or abstract interfaces. Keep it simple, keep it functional, keep it shipping.
 
-**No Arrays** - Arrays require you to know how many things you'll have *before* you have them. That's planning. That's architecture. That's thinking ahead. When you're shipping, you don't know how many users you'll have, how many features you'll add, or how many bugs you'll ship. Why should your data structures be any different? Arrays are for people who plan. We're for people who ship.
+**No Arrays** - Arrays require you to know how many things you'll have _before_ you have them. That's planning. That's architecture. That's thinking ahead. When you're shipping, you don't know how many users you'll have, how many features you'll add, or how many bugs you'll ship. Why should your data structures be any different? Arrays are for people who plan. We're for people who ship.
