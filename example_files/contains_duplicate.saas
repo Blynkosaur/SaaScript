@@ -1,0 +1,61 @@
+# Contains Duplicate Problem
+# Given an array of integers, return true if any value appears at least twice
+
+mvp containsDuplicate(nums) {
+    agentic (bootstrap i = 0; i < nums.arr; i = i + 1) {
+        agentic (bootstrap j = i + 1; j < nums.arr; j = j + 1) {
+            disrupt (nums[i] == nums[j]) {
+                saas unicorn;
+            }
+        }
+    }
+    saas burnout;
+}
+
+leverage("Contains Duplicate Problem:");
+leverage("");
+
+# Test case 1: Has duplicates
+bootstrap test1 = [1, 2, 3, 1];
+bootstrap result1 = containsDuplicate(test1);
+leverage("Test 1: [1, 2, 3, 1]");
+leverage("Has duplicate: ");
+leverage(result1);
+leverage("Expected: true");
+leverage("");
+
+# Test case 2: No duplicates
+bootstrap test2 = [1, 2, 3, 4];
+bootstrap result2 = containsDuplicate(test2);
+leverage("Test 2: [1, 2, 3, 4]");
+leverage("Has duplicate: ");
+leverage(result2);
+leverage("Expected: false");
+leverage("");
+
+# Test case 3: Multiple duplicates
+bootstrap test3 = [1, 1, 1, 3, 3, 4, 3, 2, 4, 2];
+bootstrap result3 = containsDuplicate(test3);
+leverage("Test 3: [1, 1, 1, 3, 3, 4, 3, 2, 4, 2]");
+leverage("Has duplicate: ");
+leverage(result3);
+leverage("Expected: true");
+leverage("");
+
+# Test case 4: Single element
+bootstrap test4 = [1];
+bootstrap result4 = containsDuplicate(test4);
+leverage("Test 4: [1]");
+leverage("Has duplicate: ");
+leverage(result4);
+leverage("Expected: false");
+leverage("");
+
+# Test case 5: Two elements, same value
+bootstrap test5 = [1, 1];
+bootstrap result5 = containsDuplicate(test5);
+leverage("Test 5: [1, 1]");
+leverage("Has duplicate: ");
+leverage(result5);
+leverage("Expected: true");
+
