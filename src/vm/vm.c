@@ -86,6 +86,38 @@ static bool callValue(Value callee, int argCount) {
   runtimeError("Can only call functions");
   return false;
 }
+
+// Forward declarations - these are in object.c
+
+static Value arrayPushNative(int argCount, Value *args) {
+  // args[0] is the array (receiver), args[1] is the element to push
+  if (argCount != 2) {
+    runtimeError("push expects 1 argument, got %d", argCount - 1);
+    return NULL_VAL;
+  }
+  Value arrayVal = args[0];
+  Value element = args[1];
+  if (!IS_ARRAY(arrayVal)) {
+    runtimeError("push called on non-array");
+    return NULL_VAL;
+  }
+  arrayPush(arrayVal, element);
+  return arrayVal;
+}
+
+static Value arrayPopNative(int argCount, Value *args) {
+  // args[0] is the array (receiver)
+  if (argCount != 1) {
+    runtimeError("pop expects 0 arguments, got %d", argCount - 1);
+    return NULL_VAL;
+  }
+  Value arrayVal = args[0];
+  if (!IS_ARRAY(arrayVal)) {
+    runtimeError("pop called on non-array");
+    return NULL_VAL;
+  }
+  return arrayPop(arrayVal);
+}
 static ObjUpvalue *captureUpvalue(Value *local) {
   ObjUpvalue *prev = NULL;
   ObjUpvalue *current = vm.openUpvalues;
@@ -337,8 +369,35 @@ static InterpretResult run() {
     }
     case OP_CALL: {
       int argCount = READ_BYTE();
-      if (!callValue(peek(argCount), argCount)) {
-        return INTERPRET_RUNTIME_ERROR;
+      Value callee = peek(argCount);
+      // For method calls on arrays: stack is [array, native_function, ...args]
+      // We need to rearrange to [native_function, array, ...args] before
+      // calling
+      if (IS_NATIVE(callee) && argCount >= 0) {
+        // Check if the value before the callee is an array (the receiver)
+        Value *stackBeforeCallee = vm.stackTop - argCount - 2;
+        if (stackBeforeCallee >= vm.stack && IS_ARRAY(*stackBeforeCallee)) {
+          // Rearrange stack: move array to be first argument
+          Value array = *stackBeforeCallee;
+          // Shift everything down
+          for (Value *p = stackBeforeCallee; p < vm.stackTop - 1; p++) {
+            *p = *(p + 1);
+          }
+          // Put array as first argument (right before callee)
+          vm.stackTop[-argCount - 1] = array;
+          // Now call with array as first arg
+          if (!callValue(callee, argCount + 1)) {
+            return INTERPRET_RUNTIME_ERROR;
+          }
+        } else {
+          if (!callValue(callee, argCount)) {
+            return INTERPRET_RUNTIME_ERROR;
+          }
+        }
+      } else {
+        if (!callValue(callee, argCount)) {
+          return INTERPRET_RUNTIME_ERROR;
+        }
       }
       frame = &vm.frames[vm.frameCount - 1];
       break;
@@ -372,6 +431,88 @@ static InterpretResult run() {
       vm.stackTop = frame->slots;
       push(result);
       frame = &vm.frames[vm.frameCount - 1];
+      break;
+    }
+    case OP_ARRAY: {
+      int elementCount = READ_BYTE();
+      ObjArray *array = newArray();
+      // Pop elements from stack and store them temporarily
+      // Stack has elements in order: [elem0, elem1, elem2, ...]
+      // We need to reverse them when popping, then add in correct order
+      Value *tempElements = malloc(sizeof(Value) * elementCount);
+      for (int i = elementCount - 1; i >= 0; i--) {
+        tempElements[i] = pop();
+      }
+      // Now add them to array in correct order
+      for (int i = 0; i < elementCount; i++) {
+        arrayPush(OBJ_VAL(array), tempElements[i]);
+      }
+      free(tempElements);
+      push(OBJ_VAL(array));
+      break;
+    }
+    case OP_GET_INDEX: {
+      Value indexVal = pop();
+      Value arrayVal = pop();
+      if (!IS_ARRAY(arrayVal)) {
+        runtimeError("Index operation on non-array");
+        return INTERPRET_RUNTIME_ERROR;
+      }
+      if (!IS_NUMBER(indexVal)) {
+        runtimeError("Array index must be a number");
+        return INTERPRET_RUNTIME_ERROR;
+      }
+      int index = (int)PAYLOAD_NUMBER(indexVal);
+      Value element = arrayGet(arrayVal, index);
+      push(element);
+      break;
+    }
+    case OP_SET_INDEX: {
+      Value value = pop();
+      Value indexVal = pop();
+      Value arrayVal = pop();
+      if (!IS_ARRAY(arrayVal)) {
+        runtimeError("Index assignment on non-array");
+        return INTERPRET_RUNTIME_ERROR;
+      }
+      if (!IS_NUMBER(indexVal)) {
+        runtimeError("Array index must be a number");
+        return INTERPRET_RUNTIME_ERROR;
+      }
+      int index = (int)PAYLOAD_NUMBER(indexVal);
+      arraySet(arrayVal, index, value);
+      push(value);
+      break;
+    }
+    case OP_GET_PROPERTY: {
+      StringObj *name = READ_STRING();
+      Value object = peek(0);
+      if (!IS_ARRAY(object)) {
+        runtimeError("Property access on non-array");
+        return INTERPRET_RUNTIME_ERROR;
+      }
+      // Handle array methods - create bound native functions
+      if (strncmp(name->chars, "fund", name->length) == 0 &&
+          name->length == 4) {
+        // For method calls, we need to bind the array to the native function
+        // Store array on stack, then replace with native function
+        // When called, the native will receive the array as first argument
+        ObjNative *native = newNative(arrayPushNative);
+        // Keep array on stack, push native function
+        push(OBJ_VAL(native));
+      } else if (strncmp(name->chars, "churn", name->length) == 0 &&
+                 name->length == 3) {
+        ObjNative *native = newNative(arrayPopNative);
+        push(OBJ_VAL(native));
+      } else if (strncmp(name->chars, "arr", name->length) == 0 &&
+                 name->length == 6) {
+        Value length = arrayLength(object);
+        pop(); // Remove array from stack
+        push(length);
+      } else {
+        runtimeError("Unknown property '%.*s'", name->length, name->chars);
+        return INTERPRET_RUNTIME_ERROR;
+      }
       break;
     }
     }

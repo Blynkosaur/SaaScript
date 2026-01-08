@@ -12,6 +12,7 @@ typedef enum {
   OBJ_NATIVE,
   OBJ_CLOSURE,
   OBJ_UPVALUE,
+  OBJ_ARRAY,
 } ObjType;
 
 struct Obj {
@@ -60,8 +61,20 @@ typedef struct {
 
 } ObjNative;
 
+typedef struct {
+  Obj obj;
+  ValueArray elements;
+} ObjArray;
+
 ObjFunction *newFunction();
 ObjNative *newNative(NativeFunction function);
+ObjArray *newArray();
+
+void arrayPush(Value arrayVal, Value element);
+Value arrayPop(Value arrayVal);
+Value arrayLength(Value arrayVal);
+Value arrayGet(Value arrayVal, int index);
+void arraySet(Value arrayVal, int index, Value value);
 
 void printObject(Value value);
 
@@ -85,6 +98,8 @@ static inline bool isObjType(Value value, ObjType type) {
 #define PAYLOAD_NATIVE(value) (((ObjNative *)PAYLOAD_OBJ(value))->function)
 #define IS_CLOSURE(value) isObjType(value, OBJ_CLOSURE)
 #define PAYLOAD_CLOSURE(value) ((ObjClosure *)PAYLOAD_OBJ(value))
+#define IS_ARRAY(value) isObjType(value, OBJ_ARRAY)
+#define PAYLOAD_ARRAY(value) ((ObjArray *)PAYLOAD_OBJ(value))
 StringObj *copyString(const char *chars, int length);
 
 StringObj *makeObjWithString(char *chars, int length);

@@ -700,6 +700,40 @@ static void string(bool canAssign) {
       |   |
   yeah idk "a" is start +1 and "c" is lenght -2 since not 0 indexed*/
 }
+
+static void array(bool canAssign) {
+  uint8_t elementCount = 0;
+  if (!check(TOKEN_RIGHT_BRACKET)) {
+    do {
+      expression();
+      if (elementCount == 255) {
+        error("Can't have more than 255 elements in array");
+        return;
+      }
+      elementCount++;
+    } while (match(TOKEN_COMMA));
+  }
+  consume(TOKEN_RIGHT_BRACKET, "Expect ']' after array elements.");
+  writeBytes(OP_ARRAY, elementCount);
+}
+
+static void subscript(bool canAssign) {
+  expression();
+  consume(TOKEN_RIGHT_BRACKET, "Expect ']' after index.");
+  if (canAssign && match(TOKEN_EQUAL)) {
+    expression();
+    writeByte(OP_SET_INDEX);
+  } else {
+    writeByte(OP_GET_INDEX);
+  }
+}
+
+static void dot(bool canAssign) {
+  consume(TOKEN_IDENTIFIER, "Expect property name after '.'");
+  Token name = parser.previous;
+  uint8_t nameConstant = identifierConstant(&name);
+  writeBytes(OP_GET_PROPERTY, nameConstant);
+}
 static void namedVariable(Token name, bool canAssign) {
   uint8_t getOp, setOp;
   int arg = resolveLocal(current, &name);
@@ -732,8 +766,10 @@ ParseRule rules[] = {
     [TOKEN_RIGHT_PAREN] = {NULL, NULL, PREC_NONE},
     [TOKEN_LEFT_BRACE] = {NULL, NULL, PREC_NONE},
     [TOKEN_RIGHT_BRACE] = {NULL, NULL, PREC_NONE},
+    [TOKEN_LEFT_BRACKET] = {array, subscript, PREC_CALL},
+    [TOKEN_RIGHT_BRACKET] = {NULL, NULL, PREC_NONE},
     [TOKEN_COMMA] = {NULL, NULL, PREC_NONE},
-    [TOKEN_DOT] = {NULL, NULL, PREC_NONE},
+    [TOKEN_DOT] = {NULL, dot, PREC_CALL},
     [TOKEN_MINUS] = {unary, binary, PREC_TERM},
     [TOKEN_PLUS] = {NULL, binary, PREC_TERM},
     [TOKEN_SEMICOLON] = {NULL, NULL, PREC_NONE},

@@ -1,0 +1,16 @@
+var arr = [1, 2, 3];
+print arr;
+print arr[0];
+print arr[1];
+print arr[2];
+arr[0] = 10;
+print arr[0];
+print arr.length;
+arr.push(4);
+print arr;
+print arr.length;
+var popped = arr.pop();
+print popped;
+print arr;
+print arr.length;
+
