@@ -823,6 +823,11 @@ ObjFunction *compile(const char *source) {
       return NULL;
     }
     declaration();
+    // In file mode, exit immediately on error instead of trying to recover
+    if (parser.hadError && !vm.repl) {
+      current = NULL;
+      return NULL;
+    }
   }
   ObjFunction *function = endCompiler();
   return parser.hadError ? NULL : function;

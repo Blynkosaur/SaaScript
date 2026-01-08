@@ -9,7 +9,7 @@ leverage arr.arr;
 arr.fund(4);
 leverage arr;
 leverage arr.arr;
-var popped = arr.();
+bootstrap popped = arr.churn();
 leverage popped;
 leverage arr;
 leverage arr.arr;
