@@ -501,11 +501,11 @@ static InterpretResult run() {
         // Keep array on stack, push native function
         push(OBJ_VAL(native));
       } else if (strncmp(name->chars, "churn", name->length) == 0 &&
-                 name->length == 3) {
+                 name->length == 5) {
         ObjNative *native = newNative(arrayPopNative);
         push(OBJ_VAL(native));
       } else if (strncmp(name->chars, "arr", name->length) == 0 &&
-                 name->length == 6) {
+                 name->length == 3) {
         Value length = arrayLength(object);
         pop(); // Remove array from stack
         push(length);
