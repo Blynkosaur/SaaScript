@@ -98,6 +98,52 @@ ObjUpvalue *newUpvalue(Value *slot) {
   upvalue->closed = NULL_VAL;
   return upvalue;
 }
+
+ObjArray *newArray() {
+  ObjArray *array = malloc(sizeof(ObjArray));
+  array->obj.type = OBJ_ARRAY;
+  array->obj.next = vm.objectsHead;
+  vm.objectsHead = (Obj *)array;
+  initValueArray(&array->elements);
+  return array;
+}
+
+void arrayPush(Value arrayVal, Value element) {
+  ObjArray *array = PAYLOAD_ARRAY(arrayVal);
+  writeValueArray(&array->elements, element);
+}
+
+Value arrayPop(Value arrayVal) {
+  ObjArray *array = PAYLOAD_ARRAY(arrayVal);
+  if (array->elements.count == 0) {
+    return NULL_VAL;
+  }
+  Value popped = array->elements.values[array->elements.count - 1];
+  array->elements.count--;
+  return popped;
+}
+
+Value arrayLength(Value arrayVal) {
+  ObjArray *array = PAYLOAD_ARRAY(arrayVal);
+  return NUMBER_VAL((double)array->elements.count);
+}
+
+Value arrayGet(Value arrayVal, int index) {
+  ObjArray *array = PAYLOAD_ARRAY(arrayVal);
+  if (index < 0 || index >= array->elements.count) {
+    return NULL_VAL;
+  }
+  return array->elements.values[index];
+}
+
+void arraySet(Value arrayVal, int index, Value value) {
+  ObjArray *array = PAYLOAD_ARRAY(arrayVal);
+  if (index < 0 || index >= array->elements.count) {
+    return; // Out of bounds, do nothing
+  }
+  array->elements.values[index] = value;
+}
+
 static void printFunction(ObjFunction *function) {
   if (function->name == NULL) {
     printf("<script>");
@@ -126,6 +172,18 @@ void printObject(Value value) {
   }
   case OBJ_UPVALUE: {
     printf("upvalue");
+    break;
+  }
+  case OBJ_ARRAY: {
+    ObjArray *array = PAYLOAD_ARRAY(value);
+    printf("[");
+    for (int i = 0; i < array->elements.count; i++) {
+      printValue(array->elements.values[i]);
+      if (i < array->elements.count - 1) {
+        printf(", ");
+      }
+    }
+    printf("]");
     break;
   }
   }

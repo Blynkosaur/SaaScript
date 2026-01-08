@@ -1,0 +1,39 @@
+# Two Sum Problem
+# Find two numbers in an array that add up to a target value
+
+mvp twoSum(arr, target) {
+    bootstrap i = 0;
+    b2b (i < arr.arr) {
+        bootstrap j = i + 1;
+        b2b (j < arr.arr) {
+            disrupt (arr[i] + arr[j] == target) {
+                bootstrap result = [i, j];
+                saas result;
+            }
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    saas -1;
+}
+
+leverage("Two Sum Problem:");
+bootstrap numbers = [2, 7, 11, 15];
+bootstrap target = 9;
+bootstrap result = twoSum(numbers, target);
+
+disrupt (result != -1) {
+    bootstrap idx1 = result[0];
+    bootstrap idx2 = result[1];
+    leverage("Found indices:");
+    leverage(idx1);
+    leverage(idx2);
+    leverage("Values:");
+    leverage(numbers[idx1]);
+    leverage(numbers[idx2]);
+} pivot {
+    leverage("No solution found");
+}
+
+leverage("");
+

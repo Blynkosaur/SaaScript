@@ -6,11 +6,11 @@ mvp factorial(n) {
     saas n * factorial(n - 1);
 }
 
-leverage "Factorial of 5:";
+leverage("Factorial of 5:");
 bootstrap result = factorial(5);
-leverage result;
+leverage(result);
 
-leverage "";
-leverage "Factorial of 7:";
+leverage("");
+leverage("Factorial of 7:");
 bootstrap result2 = factorial(7);
-leverage result2;
+leverage(result2);

@@ -42,6 +42,12 @@ static void freeObject(Obj *object) {
   case OBJ_UPVALUE:
     free(object);
     break;
+  case OBJ_ARRAY: {
+    ObjArray *array = (ObjArray *)object;
+    freeValueArray(&array->elements);
+    free(object);
+    break;
+  }
   }
 }
 void freeObjects() {

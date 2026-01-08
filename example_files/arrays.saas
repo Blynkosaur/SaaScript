@@ -1,0 +1,15 @@
+bootstrap arr = [1, 2, 3];
+leverage(arr);
+leverage(arr[0]);
+leverage(arr[1]);
+leverage(arr[2]);
+arr[0] = 10;
+leverage(arr[0]);
+leverage(arr.arr);
+arr.fund(4);
+leverage(arr);
+leverage(arr.arr);
+bootstrap popped = arr.churn();
+leverage(popped);
+leverage(arr);
+leverage(arr.arr);

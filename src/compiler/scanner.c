@@ -99,7 +99,7 @@ static TokenType saasType() {
       case '2':
         return checkKeyword(2, 1, "b", TOKEN_WHILE);
       case 'l':
-        return checkKeyword(2, 9, "lockchain", TOKEN_NULL);
+        return checkKeyword(2, 8, "ockchain", TOKEN_NULL);
       case 'o':
         return checkKeyword(2, 7, "otstrap", TOKEN_VAR);
       case 'u':
@@ -266,6 +266,10 @@ Token scanToken() {
     return makeToken(TOKEN_LEFT_BRACE);
   case '}':
     return makeToken(TOKEN_RIGHT_BRACE);
+  case '[':
+    return makeToken(TOKEN_LEFT_BRACKET);
+  case ']':
+    return makeToken(TOKEN_RIGHT_BRACKET);
   case ';':
     return makeToken(TOKEN_SEMICOLON);
   case ',':

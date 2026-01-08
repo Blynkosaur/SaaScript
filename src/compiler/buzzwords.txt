@@ -1,6 +1,9 @@
 mappings
 ==================================================
 agentic      -> TOKEN_FOR     # Agentic loops for iterative actions.
+arr          -> TOKEN_LENGTH  # Annual Recurring Revenue measures recurring value length.
+churn        -> TOKEN_POP     # Customer churn removes elements from the stack.
+fund         -> TOKEN_PUSH    # Funding injects new elements into the stack.
 b2b          -> TOKEN_WHILE   # B2B cycles for sustained processes.
 blockchain   -> TOKEN_NULL    # Blockchain's empty/decentralized null state.
 bootstrap    -> TOKEN_VAR     # Bootstrap initial variables/funding.
@@ -13,4 +16,5 @@ saas         -> TOKEN_RETURN  # SaaS delivers recurring returns.
 scale        -> TOKEN_OR      # Scale via options/disjunction.
 synergy      -> TOKEN_AND     # Synergy combines conditions.
 unicorn      -> TOKEN_TRUE    # Unicorn achievement as true success.
+
 

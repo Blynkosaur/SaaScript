@@ -2,23 +2,23 @@
 bootstrap isSunny = unicorn;
 bootstrap isWeekend = burnout;
 
-leverage "Is it sunny? ";
-leverage isSunny;
-leverage "Is it weekend? ";
-leverage isWeekend;
+leverage("Is it sunny? ");
+leverage(isSunny);
+leverage("Is it weekend? ");
+leverage(isWeekend);
 
-leverage "";
+leverage("");
 disrupt (isSunny synergy isWeekend) {
-    leverage "Perfect day for outdoor activities!";
+    leverage("Perfect day for outdoor activities!");
 } pivot {
-    leverage "Maybe stay inside today.";
+    leverage("Maybe stay inside today.");
 }
 
 bootstrap hasMoney = unicorn;
 bootstrap hasTime = unicorn;
 
 disrupt (hasMoney scale hasTime) {
-    leverage "You can go shopping or relax!";
+    leverage("You can go shopping or relax!");
 } pivot {
-    leverage "Need to work on priorities.";
+    leverage("Need to work on priorities.");
 }
