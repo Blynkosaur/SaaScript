@@ -61,6 +61,9 @@ Instead of traditional keywords like `if`, `while`, or `var`, SaaScript uses tec
 | `unicorn`    | `TOKEN_TRUE`   | `true`              | Boolean true           |
 | `burnout`    | `TOKEN_FALSE`  | `false`             | Boolean false          |
 | `blockchain` | `TOKEN_NULL`   | `null`              | Null value             |
+| `arr`        | `TOKEN_LENGTH` | `.length`           | Array length property  |
+| `fund`       | `TOKEN_PUSH`   | `.push()`           | Add element to array   |
+| `churn`      | `TOKEN_POP`    | `.pop()`            | Remove element from array |
 
 See `src/compiler/buzzwords.txt` for the complete mapping with explanations.
 
@@ -70,6 +73,8 @@ See `src/compiler/buzzwords.txt` for the complete mapping with explanations.
 - 📦 Variable declarations and assignments (`bootstrap`)
 - 🔁 Conditionals and control flow (`disrupt`, `b2b`, `pivot`)
 - 🧰 Function definitions and calls (`mvp`)
+- 📊 Arrays with indexing, length, push, and pop operations
+- 💬 Comments using `#` for single-line comments
 - 🐞 Basic error handling and debugging output
 - 📄 Optional REPL or script execution mode
 - 🚫 **NO OOP** - When you ship, there's no time for design patterns or classes
@@ -101,12 +106,98 @@ saas script.saas
 Example `.saas` file:
 
 ```saas
+# This is a comment - use # for single-line comments
 bootstrap x = 10;
 leverage x;
+```
+
+## 📊 Arrays
+
+SaaScript supports arrays with the following operations:
+
+### Creating Arrays
+
+Arrays are created using square brackets with comma-separated values:
+
+```saas
+bootstrap arr = [1, 2, 3];
+bootstrap names = ["Alice", "Bob", "Charlie"];
+```
+
+### Accessing Elements
+
+Access array elements using zero-based indexing:
+
+```saas
+bootstrap arr = [10, 20, 30];
+leverage arr[0];  # Prints 10
+leverage arr[1];  # Prints 20
+arr[0] = 100;     # Modify element at index 0
+```
+
+### Array Length
+
+Get the length of an array using the `.arr` property:
+
+```saas
+bootstrap arr = [1, 2, 3, 4, 5];
+leverage arr.arr;  # Prints 5
+```
+
+### Adding Elements
+
+Add elements to the end of an array using `.fund()` (push):
+
+```saas
+bootstrap arr = [1, 2, 3];
+arr.fund(4);      # Add 4 to the end
+leverage arr;      # Prints [1, 2, 3, 4]
+```
+
+### Removing Elements
+
+Remove and return the last element using `.churn()` (pop):
+
+```saas
+bootstrap arr = [1, 2, 3, 4];
+bootstrap last = arr.churn();  # Remove and get last element
+leverage last;                  # Prints 4
+leverage arr;                   # Prints [1, 2, 3]
+```
+
+### Complete Array Example
+
+```saas
+# Create an array
+bootstrap numbers = [5, 10, 15];
+
+# Access and modify elements
+numbers[0] = 20;
+leverage numbers[0];  # Prints 20
+
+# Get length
+leverage numbers.arr;  # Prints 3
+
+# Add element
+numbers.fund(25);
+leverage numbers;      # Prints [5, 10, 15, 25]
+
+# Remove element
+bootstrap popped = numbers.churn();
+leverage popped;       # Prints 25
+leverage numbers;      # Prints [5, 10, 15]
+```
+
+## 💬 Comments
+
+SaaScript supports single-line comments using the `#` character. Everything after `#` on a line is treated as a comment and ignored by the compiler:
+
+```saas
+# This is a comment
+bootstrap x = 10;  # This is also a comment
+leverage x;  # Comments can appear after code
 ```
 
 ## 💡 Philosophy
 
 **No Classes, No OOP** - This language intentionally omits object-oriented programming features. Why? Because when you're shipping fast, there's no time for design patterns, inheritance hierarchies, or abstract interfaces. Keep it simple, keep it functional, keep it shipping.
-
-**No Arrays** - Arrays require you to know how many things you'll have _before_ you have them. That's planning. That's architecture. That's thinking ahead. When you're shipping, you don't know how many users you'll have, how many features you'll add, or how many bugs you'll ship. Why should your data structures be any different? Arrays are for people who plan. We're for people who ship.
