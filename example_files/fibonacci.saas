@@ -6,10 +6,10 @@ mvp fibonacci(n) {
     saas fibonacci(n - 1) + fibonacci(n - 2);
 }
 
-leverage "First 10 Fibonacci numbers:";
+leverage("First 10 Fibonacci numbers:");
 bootstrap i = 0;
 b2b (i < 10) {
     bootstrap fib = fibonacci(i);
-    leverage fib;
+    leverage(fib);
     i = i + 1;
 }

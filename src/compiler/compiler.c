@@ -403,7 +403,9 @@ static void forLoop() {
   endScope();
 }
 static void printStatement() {
+  consume(TOKEN_LEFT_PAREN, "Expect '(' after 'leverage'.");
   expression();
+  consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
   consume(TOKEN_SEMICOLON, "Expect ';' after value.");
   writeByte(OP_PRINT);
 }

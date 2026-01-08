@@ -1,2 +1,2 @@
 # Hello World - The classic first program
-leverage "Hello, World!";
+leverage("Hello, World!");

@@ -17,7 +17,7 @@ mvp twoSum(arr, target) {
     saas -1;
 }
 
-leverage "Two Sum Problem:";
+leverage("Two Sum Problem:");
 bootstrap numbers = [2, 7, 11, 15];
 bootstrap target = 9;
 bootstrap result = twoSum(numbers, target);
@@ -25,15 +25,15 @@ bootstrap result = twoSum(numbers, target);
 disrupt (result != -1) {
     bootstrap idx1 = result[0];
     bootstrap idx2 = result[1];
-    leverage "Found indices:";
-    leverage idx1;
-    leverage idx2;
-    leverage "Values:";
-    leverage numbers[idx1];
-    leverage numbers[idx2];
+    leverage("Found indices:");
+    leverage(idx1);
+    leverage(idx2);
+    leverage("Values:");
+    leverage(numbers[idx1]);
+    leverage(numbers[idx2]);
 } pivot {
-    leverage "No solution found";
+    leverage("No solution found");
 }
 
-leverage "";
+leverage("");
 

@@ -1,8 +1,8 @@
 # Function definitions and calls
 mvp greet(name) {
-    leverage "Hello, ";
-    leverage name;
-    leverage "!";
+    leverage("Hello, ");
+    leverage(name);
+    leverage("!");
 }
 
 mvp add(a, b) {
@@ -15,11 +15,11 @@ mvp multiply(a, b) {
 
 # Call functions
 greet("SaaScript");
-leverage "";
+leverage("");
 bootstrap result1 = add(5, 3);
-leverage "5 + 3 = ";
-leverage result1;
+leverage("5 + 3 = ");
+leverage(result1);
 
 bootstrap result2 = multiply(4, 7);
-leverage "4 * 7 = ";
-leverage result2;
+leverage("4 * 7 = ");
+leverage(result2);
